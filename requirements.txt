@@ -2,7 +2,7 @@ config==0.5.1
 GitPython==3.1.31
 httpx==0.23.3
 loguru==0.6.0
-OpenAIAuth==0.2.0
+OpenAIAuth==0.3.2
 Pillow==9.4.0
 requests==2.28.1
 selenium==4.8.0

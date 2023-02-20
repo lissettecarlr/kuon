@@ -31,9 +31,16 @@ if __name__ == '__main__':
     acheong08ChatGPTPath = os.path.join(cache_dir,'acheong08ChatGPTPath')
     if os.path.exists(acheong08ChatGPTPath):
         shutil.rmtree(acheong08ChatGPTPath,onerror=readonly_handler)
+        print('删除缓存文件夹')
+    print('开始克隆仓库')    
     Repo.clone_from('https://github.com/acheong08/ChatGPT.git',to_path=acheong08ChatGPTPath,branch='main')
+    print('克隆完成，移动文件')
     # 将核心文件夹移动到chatGPT目录
+    if os.path.exists(os.path.join(chatGPT_dir,'revChatGPT')):
+        shutil.rmtree(os.path.join(chatGPT_dir,'revChatGPT'),onerror=readonly_handler)
+        print('删除旧的revChatGPT文件夹')
     os.rename(os.path.join(acheong08ChatGPTPath,'src','revChatGPT'),os.path.join(chatGPT_dir,'revChatGPT'))
+    print('移动完成，删除缓存文件夹')
     #删除缓存文件夹及其内容
     shutil.rmtree(acheong08ChatGPTPath,onerror=readonly_handler)
     print('更新完成，该仓库消息请直接去 https://github.com/acheong08/ChatGPT 查看')

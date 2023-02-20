@@ -34,6 +34,9 @@ class MultiplethinkingA:
 
     # message：对话，id：谁说的
     async def response(self, message) -> str:
+        #从消息中去除keyword
+        for i in self.keyword:
+            message = message.replace(i,"")
         async with self.lock:
             resp = ""
             for data in self.thinking.ask(

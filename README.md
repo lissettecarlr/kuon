@@ -1,5 +1,5 @@
 # KUON
-久远，一个简单的聊天机器人，目前使用mirai对接了QQ，支持bing和chatgpt。
+久远，一个简单的聊天机器人，目前使用mirai对接了QQ，支持bing和chatgpt，。
 
 ## 使用
 ### 环境
@@ -33,6 +33,10 @@ python utilty/updateBingChat.py
 python QQbot.py
 ```
 然后QQ好友直接对话，如果是群则@后对话。
+
+
+使用/bing xxx可以和bing机器人交流
+使用/animate xxx可以搜索xxx动漫的下载磁链链接
 
 ### 效果
 ![QQ截图](./utils/1.png)
