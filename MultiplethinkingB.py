@@ -34,10 +34,13 @@ class MultiplethinkingB:
     async def response(self, message) -> str:
         if(self.thinking == None):
             return ""
+        #从消息中去除keyword
+        for i in self.keyword:
+            message = message.replace(i,"")
         async with self.lock:
             #resp = ""
             resp = (await self.thinking.ask(prompt=message))["item"]["messages"][1]["adaptiveCards"][0]["body"][0]["text"],
-            logger.info("bingChat: {}".format(resp))
+            #logger.info("bingChat: {}".format(resp))
             return resp
     
     async def close(self):

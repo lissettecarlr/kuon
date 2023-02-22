@@ -127,7 +127,7 @@ async def on_friend_request(event: BotInvitedJoinGroupRequestEvent):
 #启动时连接到OpenAI
 @app.broadcast.receiver(AccountLaunch)
 async def start_background(loop: asyncio.AbstractEventLoop):
-    if(brain.defaultActivate()):
+    if(await brain.defaultActivate()):
         logger.info("思维A启动成功")
         logger.info("尝试连接到 Mirai 服务……")
     

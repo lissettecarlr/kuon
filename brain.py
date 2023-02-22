@@ -13,10 +13,12 @@ thinkingB = MultiplethinkingB()
 thinkingC = MultiplethinkingC()
 
 # 启动时默认思维
-def defaultActivate(name = "A"):
-    if(activateThinking(name) == False):
+async def defaultActivate(isknowingOneself=True):
+    if(thinkingA.activate()==False):
         return(False)
-    if(changeThinking(name) == False):
+    if(isknowingOneself):
+        await thinkingA.knowingOneself()
+    if(changeThinking('A') == False):
         return(False)
     return True
 
@@ -74,3 +76,4 @@ async def response(message,ghost = "A"):
     # else:
     resp = await thinking.response(message)
     return resp
+

@@ -1,7 +1,8 @@
 # KUON
-久远，一个简单的聊天机器人，目前使用mirai对接了QQ，支持bing和chatgpt，。
+久远，一个简单的聊天机器人，目前使用mirai对接了QQ，支持bing和chatgpt。增加了爬取动漫磁链。
 
 ## 使用
+
 ### 环境
 
 ```
@@ -41,6 +42,11 @@ python QQbot.py
 ### 效果
 ![QQ截图](./utils/1.png)
 
+### 直接命令行交流
+测试工具，不对接QQ，本地命令行直接交流
+运行app.py即可，当然还是需要chatgpt和bing的配置。
+效果如下图：
+![命令行图](./utils/2.png)
 
 ## 文件说明
 
@@ -48,3 +54,5 @@ python QQbot.py
 * brain.py: 脑袋，用于管理各个思想，也即不同的对话机器人
 * MultiplethinkingA.py: chatgpt的思想，包含了chatgpt的接口
 * MultiplethinkingB.py: bingChat的思想，包含了bingChat的接口
+* MultiplethinkingC.py: 动漫磁链爬取
+* app.py 不对接QQ，之间本地对话
