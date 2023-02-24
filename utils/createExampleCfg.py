@@ -49,7 +49,7 @@ if __name__ == '__main__':
                 "temperature":0.5,
                 "proxy":"http://127.0.0.1:1234",
                 "paid" : "False",
-                "insecureAuth": "False"
+                "insecureAuth": "False",
+                "preinstall":[]
             },f,indent=2)
-
 
