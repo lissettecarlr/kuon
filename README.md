@@ -14,8 +14,7 @@ pip install -r requirements.txt
 python utilty/createExampleCfg.py
 ```
 文件被生成在/config文件中，你需要在botconfig.json中填写mirai的配置，关于mirai服务搭建，可以在[博文](https://blog.kala.love/posts/c367c10b/)中查看
-openAiConfig.json文件当然就是让你填写chatgpt的配置了，写入你的账号密码即可，目前使用的是[acheong08]
-(https://github.com/acheong08?tab=repositories)的方案
+openAiConfig.json文件当然就是让你填写chatgpt的配置了，写入你的账号密码即可，目前使用的是[acheong08](https://github.com/acheong08?tab=repositories)的方案
 
 ### 下载对接chatgpt的代码（可选）
 目前使用的acheong08/ChatGPT的方案，但是由于日新月异，可能需要经常需要更新，如果源码的接口变动了，那估计你的去改改MultiplethinkingA.py，目前openai官方是没有提供chatgpt的接口的，等之后有了更好的方案再说吧。
@@ -55,4 +54,4 @@ python QQbot.py
 * MultiplethinkingA.py: chatgpt的思想，包含了chatgpt的接口
 * MultiplethinkingB.py: bingChat的思想，包含了bingChat的接口
 * MultiplethinkingC.py: 动漫磁链爬取
-* app.py 不对接QQ，之间本地对话
+* app.py 不对接QQ，直接本地对话
