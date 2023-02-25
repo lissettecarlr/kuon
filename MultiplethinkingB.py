@@ -19,9 +19,11 @@ class MultiplethinkingB:
 
     def activate(self):
         # 判断是否存在cookies文件
-        cookiesPath = os.path.join(os.path.dirname(__file__), "cfg", "bingCookies.json")
+        cookiesPath = os.path.join(os.path.dirname(
+            __file__), "cfg", "bingCookies.json")
         if not os.path.exists(cookiesPath):
-            logger.error("bingCookies.json 配置文件未找到！请配置 Bing 到 {}".format(cookiesPath))
+            logger.error(
+                "bingCookies.json 配置文件未找到！请配置 Bing 到 {}".format(cookiesPath))
             return False
         try:
             self.thinking = Chatbot(cookiePath=cookiesPath)
@@ -40,12 +42,16 @@ class MultiplethinkingB:
             message = message.replace(i, "")
         async with self.lock:
             # resp = ""
-            resp = (
-                (await self.thinking.ask(prompt=message))["item"]["messages"][1][
+            try:
+                respo = (await self.thinking.ask(prompt=message))
+                #logger.info("bingChat: {}".format(respo))
+                resp = respo["item"]["messages"][1][
                     "adaptiveCards"
                 ][0]["body"][0]["text"],
-            )
-            # logger.info("bingChat: {}".format(resp))
+            except Exception as e:
+                resp = "太坏了~已经溢出来了 >_<"
+                logger.warning("{} 出现异常：{}".format(self.name, e))
+                self.status = False
             return resp
 
     async def close(self):
