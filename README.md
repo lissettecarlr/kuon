@@ -35,8 +35,14 @@ python QQbot.py
 然后QQ好友直接对话，如果是群则@后对话。
 
 
-使用/bing xxx可以和bing机器人交流
-使用/animate xxx可以搜索xxx动漫的下载磁链链接
+### 交流中规定的命令
+```
+/chatgpt xxx  与思维A，也即chatgpt交流
+/bing xxx     与思维B，也即bing机器人交流
+/animate xxx  与思维C，可以搜索xxx动漫的下载磁链链接
+xxx           使用默认思维进行交流，在botconfig.json中配置
+/xxx 激活      手动激活思维XXX（一般在出现异常时用）
+```
 
 ### 效果
 ![QQ截图](./utils/1.png)
