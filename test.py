@@ -13,7 +13,8 @@ prompt = "你好"
 response = ""
 
 for data in thinking.ask(
-  prompt
+  prompt,
+  conversation_id="kuon"
 ): 
     response = data["message"]
 print(response)

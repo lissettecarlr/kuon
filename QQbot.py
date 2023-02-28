@@ -120,6 +120,7 @@ async def friend_message_listener(
 ):
     if friend.id == config["mirai"]["qq"]:  # 不对自己进行回复
         return
+    
     response = await handle_message(
         friend, f"friend-{friend.id}", chain.display, source
     )
@@ -178,9 +179,10 @@ async def on_friend_request(event: BotInvitedJoinGroupRequestEvent):
 # 启动时连接到OpenAI
 @app.broadcast.receiver(AccountLaunch)
 async def start_background(loop: asyncio.AbstractEventLoop):
+    logger.info("激活默认思维: {}".format(config["defaultThinking"]))
     if await brain.defaultActivate():
-        logger.info("激活默认思维: {}".format(config["defaultThinking"]))
-        logger.info("尝试连接到 Mirai 服务……")
-
+        logger.info("激活成功，尝试连接到 Mirai 服务")
+    else:
+        logger.info("激活失败，在连接上 Mirai 服务后请手动激活")
 
 app.launch_blocking()

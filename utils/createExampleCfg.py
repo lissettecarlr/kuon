@@ -36,7 +36,9 @@ if __name__ == '__main__':
                         "mention" : "at", # QQ群中被AT才触发
                         "prefix":[""], # 命令前缀
                         "acceptFriendRequest":"True", #是否接收好友请求
-                        "acceptGroupRequest":"False" #是否接收群请求
+                        "acceptGroupRequest":"False", #是否接收群请求
+                        "defaultThinking":"A", #默认激活思维
+                        "isloadRPG":"False" #是否加载预设角色扮演
             },f,indent=2)
             
 

@@ -1,41 +1,41 @@
 # KUON
-久远，一个简单的聊天机器人，目前使用mirai对接了QQ，支持bing和chatgpt。增加了爬取动漫磁链。
+久远，一个简单的聊天机器人，目前使用mirai对接了QQ，支持bing和chatgpt。增加了爬取动漫磁链。该机器人很初级，所有代码少依赖少，也是我的起点，之后慢慢迭代。
 
-## 使用
+## 1 使用
 
-### 环境
+### 1.1 环境
 
 ```
 pip install -r requirements.txt
 ```
 
-### 生成默认配置文件
+### 1.2 生成默认配置文件
 ```
 python utilty/createExampleCfg.py
 ```
 文件被生成在/config文件中，你需要在botconfig.json中填写mirai的配置，关于mirai服务搭建，可以在[博文](https://blog.kala.love/posts/c367c10b/)中查看
 openAiConfig.json文件当然就是让你填写chatgpt的配置了，写入你的账号密码即可，目前使用的是[acheong08](https://github.com/acheong08?tab=repositories)的方案
 
-### 下载对接chatgpt的代码（可选）
+### 1.3 下载对接chatgpt的代码（可选）
 目前使用的acheong08/ChatGPT的方案，但是由于日新月异，可能需要经常需要更新，如果源码的接口变动了，那估计你的去改改MultiplethinkingA.py，目前openai官方是没有提供chatgpt的接口的，等之后有了更好的方案再说吧。
 ```
 python utilty/updateChatGPT.py
 ```
 
-### 下载bingChat（可选）
+### 1.4 下载bingChat（可选）
 ```
 python utilty/updateBingChat.py
 ```
 如果要使用bing机器人则需要有个得到测试资格的账号，在bing.com页面去导出cookie，然后保存到bingCookies.json里
 
-### 运行
+### 1.5 运行
 ```
 python QQbot.py
 ```
 然后QQ好友直接对话，如果是群则@后对话。
 
 
-### 交流中规定的命令
+### 1.6 交流中规定的命令
 ```
 /chatgpt xxx  与思维A，也即chatgpt交流
 /bing xxx     与思维B，也即bing机器人交流
@@ -44,25 +44,69 @@ xxx           使用默认思维进行交流，在botconfig.json中配置
 /xxx 激活      手动激活思维XXX（一般在出现异常时用）
 ```
 
-### 效果
+### 1.7 效果
 ![QQ截图](./utils/1.png)
 
-### 直接命令行交流
+### 1.8 直接命令行交流
 测试工具，不对接QQ，本地命令行直接交流
 运行app.py即可，当然还是需要chatgpt和bing的配置。
 效果如下图：
 ![命令行图](./utils/2.png)
 
-## 文件说明
+## 2 文件说明
+主要文件的目录结构：
+```
+│   app.py  不对接QQ，直接本地对话
+│   brain.py 脑袋，用于管理各个思想，也即不同的对话机器人
+│   MultiplethinkingA.py chatgpt的思想，包含了chatgpt的接口
+│   MultiplethinkingB.py bingChat的思想，包含了bingChat的接口
+│   MultiplethinkingC.py 动漫磁链爬取
+│   QQbot.py 主程序，包含QQ消息的接收，调用chatgpt和bingChat获取应答，然后发送给QQ
+│   README.md
+│   requirements.txt
+│   test.py
+│
+├───cache
+├───cfg
+│   │   bingCookies.json  保存bing的cookies
+│   │   botconfig.json    基础bot的一些配置  
+│   │   botConfig.py      读取配置的中间层
+│   │   openAiConfig.json chatgpt的配置
+│
+├───chatGPT 
+│   ├───bingchat    对接bing的代码
+│   │   │   cookies.json
+│   │   │   EdgeGPT.py
+│   │   │   __init__.py
+│   │   
+│   │
+│   └───revChatGPT  对接chatgpt的代码
+│       │   config.json
+│       │   Unofficial.py
+│       │   V1.py
+│       │   V2.py
+│       │   __init__.py
+│       │
+│       │
+├───scraper  动漫磁链爬取的代码
+│   └───animate
+│       │   app.py
+│       │   spiderTo36dm.py
+│       │   utils.py
+│ 
+│ 
+│ 
+├───temp
+├───utils 一些工具
+│   │   1.png
+│   │   2.png
+│   │   createExampleCfg.py 创建默认配置，因为我没有上传配置，所有默认用它生成
+│   │   text_to_img.py  
+│   │   updateBingChat.py 
+│   │   updateChatGPT.py
+```
 
-* qqbot.py: 主程序，包含QQ消息的接收，调用chatgpt和bingChat获取应答，然后发送给QQ
-* brain.py: 脑袋，用于管理各个思想，也即不同的对话机器人
-* MultiplethinkingA.py: chatgpt的思想，包含了chatgpt的接口
-* MultiplethinkingB.py: bingChat的思想，包含了bingChat的接口
-* MultiplethinkingC.py: 动漫磁链爬取
-* app.py 不对接QQ，直接本地对话
-
-## 其他
+## 3 其他
 如果你想让chatpgt更有人情味一点，可以去openAiconfig.json中填写preinstall，在每次启动时会将其中的语句预先发给它，进行一些设定。以下仅仅是一个示例，以目前chatgpt的状态，不是那么有效了，需要更换说法。
 ```
     "preinstall":[
@@ -93,3 +137,6 @@ xxx           使用默认思维进行交流，在botconfig.json中配置
 答:（久远露出甜甜的笑容，轻轻低下头，让主人摸了一下她的头发）主人，这是对久远的奖励吗？
 
 为纸片人老婆注入灵魂！
+
+
+

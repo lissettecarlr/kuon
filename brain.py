@@ -11,7 +11,7 @@ config = OpenAiConfig.load_config()
 
 #默认思维
 defaultThinking = BotConfig.load_config()["defaultThinking"]
-
+isloadRPG = BotConfig.load_config()["isloadRPG"]
 
 thinking = None
 thinkingA = MultiplethinkingA()
@@ -19,32 +19,26 @@ thinkingB = MultiplethinkingB()
 thinkingC = MultiplethinkingC()
 
 # 启动时默认思维
-async def defaultActivate(isknowingOneself=True):
+async def defaultActivate():
     if(activateThinking(defaultThinking) == False):
         return False
     if(changeThinking(defaultThinking) == False):
         return False
-    if isknowingOneself and hasattr(thinking, "knowingOneself"):
+    if isloadRPG=="True" and hasattr(thinking, "knowingOneself") :
         await thinking.knowingOneself()
     return True
 
 # 激活思维
 def activateThinking(name="A"):
-    if name == "A":
-        if thinkingA.status:
-            return True
-        else:
+    if name in ['A','B','C']:
+        if name == "A" and thinkingA.thinking is None:
             return thinkingA.activate()
-    elif name == "B":
-        if thinkingB.status:
-            return True
-        else:
+        elif name == "B" and thinkingB.thinking is None:
             return thinkingB.activate()
-    elif name == "C":
-        if thinkingC.status:
-            return True
-        else:
+        elif name == "C" and thinkingC.thinking is None:
             return thinkingC.activate()
+        else:
+            return True
     else:
         return False
 
@@ -52,11 +46,11 @@ def activateThinking(name="A"):
 # 切换思维
 def changeThinking(name="A"):
     global thinking
-    if name == "A" and thinkingA.status:
+    if name == "A" and thinkingA.thinking is not None:
         thinking = thinkingA
-    elif name == "B" and thinkingB.status:
+    elif name == "B" and thinkingB.thinking is not None:
         thinking = thinkingB
-    elif name == "C" and thinkingC.status:
+    elif name == "C" and thinkingC.thinking is not None:
         thinking = thinkingC
     else:
         return False
@@ -84,6 +78,8 @@ def matchingThinking(text:str):
 
 async def response(message, ghost="A"):
     global thinking
+    if(thinking.status == False):
+        return("思考中，别烦我啦")
     # if(changeThinking(ghost) ==False):
     #     return("切换思维 {} 失败，无法对其应答".format(ghost))
     # else:
