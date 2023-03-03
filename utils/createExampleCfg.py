@@ -47,7 +47,7 @@ if __name__ == '__main__':
             json.dump({
                 "email": "123@123.com",
                 "password":"123",
-                "sessionToken":"123",
+                "secretKey":"123",
                 "temperature":0.5,
                 "proxy":"http://127.0.0.1:1234",
                 "paid" : "False",

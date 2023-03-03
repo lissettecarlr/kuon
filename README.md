@@ -2,6 +2,7 @@
 久远，一个简单的聊天机器人，目前使用mirai对接了QQ，支持bing和chatgpt。增加了爬取动漫磁链。该机器人很初级，所有代码少依赖少，也是我的起点，之后慢慢迭代。
 
 ## 1 使用
+新增了调用openai接口使用gpt-3.5-turbo模型的方案，代码被存放在chatgpt/GPT3_5中，可以使用python myTurbo.py --api_key=xxx命令使用，当调整完成后思维A将被替换为此种方式。这个接口理论是收费的，但是有免费额度。
 
 ### 1.1 环境
 
@@ -16,6 +17,7 @@ python utilty/createExampleCfg.py
 文件被生成在/config文件中，你需要在botconfig.json中填写mirai的配置，关于mirai服务搭建，可以在[博文](https://blog.kala.love/posts/c367c10b/)中查看
 openAiConfig.json文件当然就是让你填写chatgpt的配置了，写入你的账号密码即可，目前使用的是[acheong08](https://github.com/acheong08?tab=repositories)的方案
 
+
 ### 1.3 下载对接chatgpt的代码（可选）
 目前使用的acheong08/ChatGPT的方案，但是由于日新月异，可能需要经常需要更新，如果源码的接口变动了，那估计你的去改改MultiplethinkingA.py，目前openai官方是没有提供chatgpt的接口的，等之后有了更好的方案再说吧。
 ```
@@ -27,6 +29,7 @@ python utilty/updateChatGPT.py
 python utilty/updateBingChat.py
 ```
 如果要使用bing机器人则需要有个得到测试资格的账号，在bing.com页面去导出cookie，然后保存到bingCookies.json里
+
 
 ### 1.5 运行
 ```

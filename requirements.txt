@@ -11,3 +11,4 @@ tls_client==0.1.8
 typing_extensions==4.5.0
 undetected_chromedriver==3.4.6
 websockets==10.4
+openai
