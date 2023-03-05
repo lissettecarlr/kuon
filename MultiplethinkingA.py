@@ -6,15 +6,14 @@ import asyncio
 from cfg.botConfig import OpenAiConfig
 import os
 
-
 class MultiplethinkingA:
     def __init__(self):
         self.name = "chatGPT-unofficial"
         self.sessions = {}  # 保存对话对象
         self.lock = asyncio.Lock()
-        self.thinking = None
+        self.thinking = None   #作为存活判断
         self.config = OpenAiConfig.load_config()
-        self.status = False
+        self.status = False    #作为是否忙的判断
         self.keyword = ["/chatgpt"]
 
     def activate(self):
@@ -42,6 +41,7 @@ class MultiplethinkingA:
     # message：对话，id：谁说的
     async def response(self, message) -> str:
         # 从消息中去除keyword
+        self.status = False
         for i in self.keyword:
             message = message.replace(i, "")
         async with self.lock:
@@ -51,13 +51,16 @@ class MultiplethinkingA:
                 # conversation_id = self.conversation_id
             ):
                 resp = data["message"]
+            self.status = True
             return resp
-
+        
     async def knowingOneself(self):
-        if self.thinking == None:
+        if self.thinking == None or self.status == False:
             return False
+        self.status = False
         logger.info("开始认识自我")
         for tel in self.config["preinstall"]:
             resp = await self.response(tel)
             logger.info("{}".format(resp))
+        self.status = True
         logger.info("结束认识自我")

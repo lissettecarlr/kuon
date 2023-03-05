@@ -60,13 +60,14 @@ async def handle_message(
         return config["responseText"]["nullText"]
 
     # 匹配关键词 切换思维
-    tk = brain.matchingThinking(message)
+    tk,contents = brain.matchingThinking(message)
     logger.info("匹配到的思维：{}".format(tk))
-    brain.activateThinking(tk)  # 激活
+    if(brain.activateThinking(tk) == False):  # 激活
+        return "激活思维：{} 失败".format(tk)
     brain.changeThinking(tk)  # 切换
     if brain.thinking is None:
         return "目前处于失魂状态，无法回复消息。"
-
+    
     timeout_task = asyncio.create_task(create_timeout_task(target, source))
     try:
         # session = brain.matching_session(session_id)
@@ -80,6 +81,13 @@ async def handle_message(
         #     if resp:
         #         return config.response.rollback_success + '\n' + resp
         #     return "回滚"
+
+        # 手动激活思维 例： /激活 /bing 激活
+        if contents.strip() == "激活":
+            if(brain.thinking.activate() == True):
+                return "激活成功"
+            else:
+                return "激活失败"
 
         # 正常交流
         resp = await brain.response(message)
@@ -112,6 +120,7 @@ async def friend_message_listener(
 ):
     if friend.id == config["mirai"]["qq"]:  # 不对自己进行回复
         return
+    
     response = await handle_message(
         friend, f"friend-{friend.id}", chain.display, source
     )
@@ -170,9 +179,10 @@ async def on_friend_request(event: BotInvitedJoinGroupRequestEvent):
 # 启动时连接到OpenAI
 @app.broadcast.receiver(AccountLaunch)
 async def start_background(loop: asyncio.AbstractEventLoop):
+    logger.info("激活默认思维: {}".format(config["defaultThinking"]))
     if await brain.defaultActivate():
-        logger.info("思维A启动成功")
-        logger.info("尝试连接到 Mirai 服务……")
-
+        logger.info("激活成功，尝试连接到 Mirai 服务")
+    else:
+        logger.info("激活失败，在连接上 Mirai 服务后请手动激活")
 
 app.launch_blocking()
