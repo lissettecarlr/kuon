@@ -1,62 +1,77 @@
 # KUON
 久远，一个简单的聊天机器人，目前使用mirai对接了QQ，支持bing和chatgpt。增加了爬取动漫磁链。该机器人很初级，所有代码少依赖少，也是我的起点，之后慢慢迭代。
 
-## 1 使用
-新增了调用openai接口使用gpt-3.5-turbo模型的方案，代码被存放在chatgpt/GPT3_5中，可以使用python myTurbo.py --api_key=xxx命令使用，当调整完成后思维A将被替换为此种方式。这个接口理论是收费的，但是有免费额度。
+## 1 开发简述
+目前放弃acheong08/ChatGPT的方案，之后会用openai的官方接口gpt-3.5-turbo的模型，如果对之前版本有需求可以使用发布的v0.1.0版本。代码部分chatgpt相关将完全变动，bing不会改变。
+下一步计划是调整对话人设
 
-### 1.1 环境
+## 2 目前功能
 
+* QQ机器人
+* 爬取动漫磁链
+* gpt-3.5-turbo模型的会话AI（官方文档说chatgpt也是用的这个模型）
+* bing会话AI
+
+## 3 使用
+
+### 环境
+
+QQ机器人环境:
+关于[mirai](https://github.com/mamoe/mirai)服务搭建，可以在[博文](https://blog.kala.love/posts/c367c10b/)中查看
+
+kuon环境:
 ```
 pip install -r requirements.txt
 ```
 
-### 1.2 生成默认配置文件
+### 配置
+配置被保存在cfg文件夹，其中botconfig.json是基础配置，openAiConfig.json是chatgpt的配置，bingCookies.json是bing的配置，仓库默认是没有这几个文件的。需要通过运行命令来生成，然后填写配置。
 ```
 python utilty/createExampleCfg.py
 ```
-文件被生成在/config文件中，你需要在botconfig.json中填写mirai的配置，关于mirai服务搭建，可以在[博文](https://blog.kala.love/posts/c367c10b/)中查看
-openAiConfig.json文件当然就是让你填写chatgpt的配置了，写入你的账号密码即可，目前使用的是[acheong08](https://github.com/acheong08?tab=repositories)的方案
+关于配置项的意思也可以在createExampleCfg文件里面去查看。需要填写的配置项如下：
 
+* botconfig.json
+    * mirai的配置，包括QQ号，验证码，mirai服务的地址
+* openAiConfig.json
+    * chatgpt的key，没有可以去[这里](https://platform.openai.com/account/api-keys)创建一个
+* bingCookies.json
+    * bing的cookie，createExampleCfg不会创建它，如果要使用bing机器人则需要有个得到测试资格的账号，在bing.com页面去导出cookie，然后保存到bingCookies.json里
 
-### 1.3 下载对接chatgpt的代码（可选）
-目前使用的acheong08/ChatGPT的方案，但是由于日新月异，可能需要经常需要更新，如果源码的接口变动了，那估计你的去改改MultiplethinkingA.py，目前openai官方是没有提供chatgpt的接口的，等之后有了更好的方案再说吧。
-```
-python utilty/updateChatGPT.py
-```
+### 更新（可选）
 
-### 1.4 下载bingChat（可选）
+由于目前bing机器人方案使用的[acheong08/EdgeGPT](https://github.com/acheong08/EdgeGPT)，可以使用下面的命令更新到最新版本。
 ```
 python utilty/updateBingChat.py
 ```
-如果要使用bing机器人则需要有个得到测试资格的账号，在bing.com页面去导出cookie，然后保存到bingCookies.json里
 
 
-### 1.5 运行
+### 运行
+
+#### QQ
 ```
 python QQbot.py
 ```
 然后QQ好友直接对话，如果是群则@后对话。
 
+![QQ截图](./pic/1.png)
 
-### 1.6 交流中规定的命令
+#### 命令行
+测试工具，不对接QQ，本地命令行直接交流
+运行app.py即可，当然还是需要chatgpt和bing的配置。
+效果如下图：
+![命令行图](./pic/2.png)
+
+
+#### 交流中的规定
 ```
 /chatgpt xxx  与思维A，也即chatgpt交流
 /bing xxx     与思维B，也即bing机器人交流
 /animate xxx  与思维C，可以搜索xxx动漫的下载磁链链接
 xxx           使用默认思维进行交流，在botconfig.json中配置
-/xxx 激活      手动激活思维XXX（一般在出现异常时用）
 ```
 
-### 1.7 效果
-![QQ截图](./utils/1.png)
-
-### 1.8 直接命令行交流
-测试工具，不对接QQ，本地命令行直接交流
-运行app.py即可，当然还是需要chatgpt和bing的配置。
-效果如下图：
-![命令行图](./utils/2.png)
-
-## 2 文件说明
+## 4 文件说明
 主要文件的目录结构：
 ```
 │   app.py  不对接QQ，直接本地对话
@@ -80,15 +95,11 @@ xxx           使用默认思维进行交流，在botconfig.json中配置
 │   ├───bingchat    对接bing的代码
 │   │   │   cookies.json
 │   │   │   EdgeGPT.py
-│   │   │   __init__.py
+│   │   
 │   │   
 │   │
-│   └───revChatGPT  对接chatgpt的代码
-│       │   config.json
-│       │   Unofficial.py
-│       │   V1.py
-│       │   V2.py
-│       │   __init__.py
+│   └───GPT3_5  对接chatgpt的代码
+│       │   myTurbo.py
 │       │
 │       │
 ├───scraper  动漫磁链爬取的代码
@@ -98,18 +109,19 @@ xxx           使用默认思维进行交流，在botconfig.json中配置
 │       │   utils.py
 │ 
 │ 
-│ 
 ├───temp
 ├───utils 一些工具
-│   │   1.png
-│   │   2.png
 │   │   createExampleCfg.py 创建默认配置，因为我没有上传配置，所有默认用它生成
 │   │   text_to_img.py  
 │   │   updateBingChat.py 
-│   │   updateChatGPT.py
 ```
 
-## 3 其他
+## 5 其他（目前使用openai提供的接口和模型，这部分正在尝试）
+
+### 新版状态
+xxx
+
+### 旧版历史
 如果你想让chatpgt更有人情味一点，可以去openAiconfig.json中填写preinstall，在每次启动时会将其中的语句预先发给它，进行一些设定。以下仅仅是一个示例，以目前chatgpt的状态，不是那么有效了，需要更换说法。
 ```
     "preinstall":[

@@ -1,4 +1,3 @@
-from chatGPT.revChatGPT.V1 import Chatbot
 from loguru import logger
 from MultiplethinkingA import MultiplethinkingA
 from MultiplethinkingB import MultiplethinkingB

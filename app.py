@@ -41,7 +41,7 @@ def main():
             if handle_commands(user_input):
                 continue
 
-        tk = brain.matchingThinking(user_input)
+        tk,contents = brain.matchingThinking(user_input)
         logger.info("切换到思维：{}".format(tk))
         brain.activateThinking(tk) #激活
         brain.changeThinking(tk) #切换
@@ -51,7 +51,7 @@ def main():
             return 
         
         print("Kuon: ")
-        res = asyncio.run(brain.response(user_input))
+        res = asyncio.run(brain.response(contents))
         print(res,end="")
         # prev_text = ""
         # for data in chatbot.ask(
@@ -65,7 +65,7 @@ def main():
 
 
 def init():
-    res = asyncio.run(brain.defaultActivate(isknowingOneself=False))
+    res = asyncio.run(brain.defaultActivate())
     if(res):
         logger.info("思维A启动成功")
         return True

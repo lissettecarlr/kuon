@@ -1,6 +1,6 @@
 # 调用openai的官方接口
 # 参考 https://platform.openai.com/docs/api-reference/completions/create
-
+# pip install --upgrade openai
 import openai
 import sys
 
@@ -9,7 +9,8 @@ class Chatbot:
         openai.api_key  = secret_key   # openai的secret key，在https://platform.openai.com/account/api-keys这个页面去创建
         self.model = "gpt-3.5-turbo"   # 或者 gpt-3.5-turbo-0301
         self.temperature = temperature # 请求时不传入默认为1 较高的值（如 0.8）将使输出更加随机，而较低的值（如 0.2）将使输出更加集中和确定
-        self.conversation = [{"role": "system", "content": preset}] # 历史对话 
+        self.preset = preset
+        self.clearConversation()
     def ask(self, msg: str):
         prompt = {"role": "user", "content": msg}
         self.conversation.append(prompt)
@@ -24,6 +25,10 @@ class Chatbot:
             return res
         except Exception as e:
             return f"发生错误: {e}"
+        
+    #清空历史对话
+    def clearConversation(self):
+        self.conversation = [{"role": "system", "content": self.preset}] 
 
 def get_input(prompt):
     print(prompt, end="")
