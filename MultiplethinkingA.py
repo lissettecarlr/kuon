@@ -21,9 +21,15 @@ class MultiplethinkingA:
             logger.error("openAiConfig.json 配置文件出错！请配置 OpenAI 的 session_token")
             return False
         try:
-            self.thinking = Chatbot(
-                secret_key = self.config["secretKey"]
-            )
+            if(self.config["preinstall"] != "" and self.config["isloadRPG"] =="True"):
+                self.thinking = Chatbot(
+                    secret_key = self.config["secretKey"],
+                    preset = self.config["preinstall"]
+                )
+            else:
+                self.thinking = Chatbot(
+                    secret_key = self.config["secretKey"]
+                )
         except Exception as e:
             logger.warning("{} 初始化失败：{}".format(self.name, e))
             return False
@@ -41,3 +47,6 @@ class MultiplethinkingA:
             resp = self.thinking.ask(message)
             self.status = True
             return resp
+        
+    def knowingOneself(self):
+        self.thinking.setPreset(self.config["preinstall"])
