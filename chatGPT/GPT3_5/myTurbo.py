@@ -3,40 +3,105 @@
 # pip install --upgrade openai
 import openai
 import sys
+import json
+import tiktoken
+import threading
+from loguru import logger
 
 class Chatbot:
-    def __init__(self,secret_key,temperature=0.7,preset="你现在是名字叫久远的AI") -> None:
+    def __init__(self,secret_key,temperature=0.7,preset="你现在是名字叫久远的AI",memoryTime=120) -> None:
         openai.api_key  = secret_key   # openai的secret key，在https://platform.openai.com/account/api-keys这个页面去创建
         self.model = "gpt-3.5-turbo"   # 或者 gpt-3.5-turbo-0301
         self.temperature = temperature # 请求时不传入默认为1 较高的值（如 0.8）将使输出更加随机，而较低的值（如 0.2）将使输出更加集中和确定
-        self.preset = preset
-        self.conversation = []
-        self.clearConversation()
+        self.preset = preset # 预设人格
+        self.conversation = [] # 历史对话
+        self.conversationMaxSize = 3000 # gpt-3.5-turbo模型最大tokens数为4096，这里设置3K是为了给应答留空间
+        self.clear_conversation()
+        self.timer_last_conversation = None # 记忆的定时器
+        self.memoryTime = memoryTime #记忆时间，单位秒，超时则清空对话历史，为0则不自动清除
 
     def ask(self, msg: str):
         prompt = {"role": "user", "content": msg}
         self.conversation.append(prompt)
-        #print(self.conversation)
+        tokens = self.get_tokens_from_conversation()
+        if tokens > self.conversationMaxSize :
+            return "对话太长了，我记不住了，请清空对话历史"
+        logger.debug("输入消耗tokens:{}".format(tokens)) #测试
         try:
+            #清除定时器
+            if self.timer_last_conversation is not None:
+                self.timer_last_conversation.cancel()
+
             response = openai.ChatCompletion.create(
                 model=self.model,
                 messages= self.conversation,
             )
             res = response.choices[0].message.content.strip()
             self.conversation.append({"role": "system", "content": res})
+            
+            # 开启定时器
+            self.__startTimer()
             return res
         except Exception as e:
             return f"发生错误: {e}"
         
     #清空历史对话
-    def clearConversation(self):
+    def clear_conversation(self):
         self.conversation = [{"role": "system", "content": self.preset}]
 
-
-    def setPreset(self,preset):
+    #设置人格，也即最初的system消息
+    def set_preset(self,preset):
         self.preset = preset
-        self.clearConversation()
+        self.clear_conversation()
 
+    # 对于历史记录估计也主要用于调教人设。tokens的限制不可能一直保留历史
+    # 加载历史对话，会清空当前的对话历史（
+    def load_conversation(self,file):
+        self.clear_conversation()
+        try:
+            with open(file, encoding="utf-8") as f:
+                self.conversation = json.load(f)
+        except Exception as e:
+            return f"加载对话发送错误: {e}"
+        return True
+    
+    def save_conversation(self,file):
+        try:
+            with open(file, "w", encoding="utf-8") as f:
+                json.dump(self.conversation, f, ensure_ascii=False, indent=4)
+        except Exception as e:
+            return f"保存对话发送错误: {e}"
+        return True
+    
+    # 获取当前conversation中的tokens数量
+    def get_tokens_from_conversation(self):
+        try:
+            encoding = tiktoken.encoding_for_model(self.model)
+        except Exception as e:
+            print(f"Error: {e}")
+            return 0
+        num_tokens = 0
+        for message in self.conversation:
+            num_tokens += 4  # every message follows <im_start>{role/name}\n{content}<im_end>\n
+            for key, value in message.items():
+                num_tokens += len(encoding.encode(value))
+                if key == "name":  # if there's a name, the role is omitted
+                    num_tokens += -1  # role is always required and always 1 token
+        num_tokens += 2  # every reply is primed with <im_start>assistant
+        return num_tokens
+
+    #启动超时定时器
+    def __startTimer(self):
+        if(self.memoryTime != 0):
+            self.timer_last_conversation = threading.Timer(self.memoryTime, self.__timeout_last_conversation)
+            self.timer_last_conversation.start()
+
+    #上一次对话超时，用于清空历史
+    def __timeout_last_conversation(self):
+        self.clear_conversation()
+        logger.debug("超时，清空对话")
+
+## 测试用
 def get_input(prompt):
     print(prompt, end="")
     lines = []

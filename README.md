@@ -3,7 +3,8 @@
 
 ## 1 开发简述
 目前放弃acheong08/ChatGPT的方案，之后会用openai的官方接口gpt-3.5-turbo的模型，如果对之前版本有需求可以使用发布的v0.1.0版本。代码部分chatgpt相关将完全变动，bing不会改变。
-该模型写入人设比网页版的chatgpt稳定多了，注册的账号有3个月的免费额度，以目前官方接口[定价](https://openai.com/pricing)，我是肯定用不完。之后看是换个号继续，还是老老实实付API费用，也很便宜，就是卡麻烦
+
+该模型写入人设比网页版的chatgpt稳定多了，注册的账号有3个月的免费额度，以目前官方接口[定价](https://openai.com/pricing)，我是肯定用不完。之后看是换个号继续，还是老老实实付API费用，也很便宜，就是卡麻烦。
 
 
 ## 2 目前功能
@@ -11,6 +12,8 @@
 * QQ机器人
 * 爬取动漫磁链
 * gpt-3.5-turbo模型的会话AI（官方文档说chatgpt也是用的这个模型）
+    * 短时记忆，超时忘却，防止脑容量不够（tokens）
+    * 传颂之物的久远人设
 * bing会话AI
 
 ## 3 使用
@@ -22,6 +25,7 @@ QQ机器人环境:
 
 kuon环境:
 ```
+Python 3.10.8
 pip install -r requirements.txt
 ```
 
@@ -70,6 +74,13 @@ python QQbot.py
 /bing xxx     与思维B，也即bing机器人交流
 /animate xxx  与思维C，可以搜索xxx动漫的下载磁链链接
 xxx           使用默认思维进行交流，在botconfig.json中配置
+```
+
+chatgpt的额外命令
+```
+cmd:tokens           获取历史记录消耗的tokens
+cmd:clear preset     清除人设            
+cmd:reset            清空历史记录
 ```
 
 ## 4 文件说明
@@ -129,3 +140,8 @@ openAiconfig.json中填写preinstall
 ![命令行图](./pic/3.png)
 
 ![命令行图](./pic/4.png)
+
+
+### openai tokens
+
+当使用openai的接口时有一定限制，具体可以看openai文档，或者我的[博文](https://blog.kala.love/posts/3ccded78/)。为了防止超出限额，我在openAiConfig中增加AmnesiacMode用于控制。当AmnesiacMode为true时，我会判断当距离上一次对话的时间，当超出了配置memoryTime的值，则清除历史消息，默认设置的是2分钟，比鱼还不如。但其实并不是那么容易聊爆脑容量的，tokens与文本关系博文里面有对于链接。
