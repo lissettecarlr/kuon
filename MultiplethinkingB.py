@@ -1,5 +1,5 @@
 # 该分裂思维正用于bingChat
-
+import re
 from chatGPT.bingchat.EdgeGPT import Chatbot
 from loguru import logger
 import asyncio
@@ -48,6 +48,8 @@ class MultiplethinkingB:
                 resp = respo["item"]["messages"][1][
                     "adaptiveCards"
                 ][0]["body"][0]["text"],
+                rmurl = re.compile(r'[http|https]*://[a-zA-Z0-9.?/&=:]*', re.S)
+                resp = re.sub(rmurl, '', resp)
             except Exception as e:
                 resp = "太坏了~已经溢出来了 >_<"
                 logger.warning("{} 出现异常：{}".format(self.name, e))
