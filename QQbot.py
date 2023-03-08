@@ -83,11 +83,11 @@ async def handle_message(
         #     return "回滚"
 
         # 手动激活思维 例： /激活 /bing 激活
-        if contents.strip() == "激活":
-            if(brain.thinking.activate() == True):
-                return "激活成功"
-            else:
-                return "激活失败"
+        # if contents.strip() == "激活":
+        #     if(brain.thinking.activate() == True):
+        #         return "激活成功"
+        #     else:
+        #         return "激活失败"
 
         # 正常交流
         resp = await brain.response(message)

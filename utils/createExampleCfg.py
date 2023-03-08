@@ -38,20 +38,16 @@ if __name__ == '__main__':
                         "acceptFriendRequest":"True", #是否接收好友请求
                         "acceptGroupRequest":"False", #是否接收群请求
                         "defaultThinking":"A", #默认激活思维
-                        "isloadRPG":"False" #是否加载预设角色扮演
             },f,indent=2)
             
-
     if not os.path.exists(openAiConfig_json):
         with open(openAiConfig_json,'w',encoding='utf-8') as f:
             json.dump({
-                "email": "123@123.com",
-                "password":"123",
-                "secretKey":"123",
-                "temperature":0.5,
-                "proxy":"http://127.0.0.1:1234",
-                "paid" : "False",
-                "insecureAuth": "False",
-                "preinstall":[]
+                "secretKey":"sk-xxx",
+                "temperature":0.7,
+                "isloadRPG":"False", #是否加载预设角色扮演
+                "preinstall":[],
+                "AmnesiacMode":"True",
+                "memoryTime":120
             },f,indent=2)
 

@@ -1,4 +1,3 @@
-from chatGPT.revChatGPT.V1 import Chatbot
 from loguru import logger
 from MultiplethinkingA import MultiplethinkingA
 from MultiplethinkingB import MultiplethinkingB
@@ -7,11 +6,10 @@ from MultiplethinkingC import MultiplethinkingC
 from cfg.botConfig import OpenAiConfig
 from cfg.botConfig import BotConfig
 
-config = OpenAiConfig.load_config()
+#config = OpenAiConfig.load_config()
 
 #默认思维
 defaultThinking = BotConfig.load_config()["defaultThinking"]
-isloadRPG = BotConfig.load_config()["isloadRPG"]
 
 thinking = None
 thinkingA = MultiplethinkingA()
@@ -24,8 +22,6 @@ async def defaultActivate():
         return False
     if(changeThinking(defaultThinking) == False):
         return False
-    if isloadRPG=="True" and hasattr(thinking, "knowingOneself") :
-        await thinking.knowingOneself()
     return True
 
 # 激活思维
