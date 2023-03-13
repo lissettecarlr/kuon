@@ -3,7 +3,8 @@ from loguru import logger
 import asyncio
 from cfg.botConfig import OpenAiConfig
 import os
-from chatGPT.GPT3_5.myTurbo import Chatbot
+#from chatGPT.GPT3_5.openaiLib import Chatbot
+from chatGPT.GPT3_5.openaiApi import Chatbot
 
 class MultiplethinkingA:
     def __init__(self):
@@ -31,7 +32,8 @@ class MultiplethinkingA:
                 self.thinking = Chatbot(
                     secret_key = self.config["secretKey"],
                     preset = self.config["preinstall"],
-                    memoryTime = memoryTime
+                    memoryTime = memoryTime,
+                    proxy = self.config["proxy"]
                 )
             else:
                 self.thinking = Chatbot(

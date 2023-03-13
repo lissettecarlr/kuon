@@ -6,6 +6,15 @@
 
 该模型写入人设比网页版的chatgpt稳定多了，注册的账号有3个月的免费额度，以目前官方接口[定价](https://openai.com/pricing)，我是肯定用不完。之后看是换个号继续，还是老老实实付API费用，也很便宜，就是卡麻烦。
 
+### 更新说明
+
+#### 2023年3月12日：
+增加了gpt的代理方式请求，我这儿网络环境都是软理由那里就直接翻了，所以之前一直没被限制的概率，考虑到便利性还是加上，现在可以在openAiConfig.json里面填充proxy，例如
+```
+"proxy": "https://service-xxxxxx-xxxxxxx.jp.apigw.tencentcs.com"
+```
+这个代理地址可以白嫖[腾讯云函数](https://console.cloud.tencent.com/scf/list?rid=25&ns=default)，这儿有份别人写的[代理教程](https://github.com/Ice-Hazymoon/openai-scf-proxy)，试过是可以的，搭建也就一两分钟的事儿。
+
 
 ## 2 目前功能
 
@@ -14,6 +23,7 @@
 * gpt-3.5-turbo模型的会话AI（官方文档说chatgpt也是用的这个模型）
     * 短时记忆，超时忘却，防止脑容量不够（tokens）
     * 传颂之物的久远人设
+    * 代理
 * bing会话AI
 
 ## 3 使用
@@ -111,7 +121,8 @@ cmd:reset            清空历史记录
 │   │   
 │   │
 │   └───GPT3_5  对接chatgpt的代码
-│       │   myTurbo.py
+│       │   openaiLib.py  使用openai python库
+│       │   openaiApi.py  直接post请求
 │       │
 │       │
 ├───scraper  动漫磁链爬取的代码
