@@ -9,7 +9,7 @@
 ### 更新说明
 
 #### 2023年3月12日：
-增加了gpt的代理方式请求，我这儿网络环境都是软理由那里就直接翻了，所以之前一直没被限制的概率，考虑到便利性还是加上，现在可以在openAiConfig.json里面填充proxy，例如
+增加了gpt的代理方式请求，我这儿网络环境都是软理由那里就直接翻了，所以之前一直没被限制的概念，但考虑到便利性还是加上，现在可以在openAiConfig.json里面填充proxy，例如
 ```
 "proxy": "https://service-xxxxxx-xxxxxxx.jp.apigw.tencentcs.com"
 ```
@@ -31,7 +31,7 @@
 ### 环境
 
 QQ机器人环境:
-关于[mirai](https://github.com/mamoe/mirai)服务搭建，可以在[博文](https://blog.kala.love/posts/c367c10b/)中查看
+关于[mirai](https://github.com/mamoe/mirai)服务搭建，可以在[博文](https://blog.kala.love/posts/c367c10b/)中查看，在登录时发生错误可以参考[这里](https://mirai.mamoe.net/topic/223/%E6%97%A0%E6%B3%95%E7%99%BB%E5%BD%95%E7%9A%84%E4%B8%B4%E6%97%B6%E5%A4%84%E7%90%86%E6%96%B9%E6%A1%88)
 
 kuon环境:
 ```
