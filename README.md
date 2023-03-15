@@ -1,7 +1,7 @@
 简体中文 | [English](./doc/english.md) | 
 
 <p align="center">
- <img src="./pic/logo.ico" align="middle" width = "300"/>
+ <img src="./pic/logo.png" align="middle" width = "300"/>
 <p align="center">
 </p>
 
