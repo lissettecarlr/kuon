@@ -1,3 +1,10 @@
+简体中文 | [English](./doc/english.md) | 
+
+<p align="center">
+ <img src="./pic/logo.ico" align="middle" width = "300"/>
+<p align="center">
+</p>
+
 # KUON
 久远，一个简单的聊天机器人，目前使用mirai对接了QQ，支持bing和chatgpt。增加了爬取动漫磁链。该机器人很初级，所以代码少依赖少，一切的起点，慢慢迭代。
 
@@ -7,6 +14,9 @@
 该模型写入人设比网页版的chatgpt稳定多了，注册的账号有3个月的免费额度，以目前官方接口[定价](https://openai.com/pricing)，我是肯定用不完。之后看是换个号继续，还是老老实实付API费用，也很便宜，就是卡麻烦。
 
 ### 更新说明
+
+#### 2023年3月15日：
+修改了文件夹的名称，gpt-4[申请](https://openai.com/waitlist/gpt-4-api)中。
 
 #### 2023年3月12日：
 增加了gpt的代理方式请求，我这儿网络环境都是软理由那里就直接翻了，所以之前一直没被限制的概念，但考虑到便利性还是加上，现在可以在openAiConfig.json里面填充proxy，例如
@@ -156,3 +166,5 @@ openAiconfig.json中填写preinstall
 ### openai tokens
 
 当使用openai的接口时有一定限制，具体可以看openai文档，或者我的[博文](https://blog.kala.love/posts/3ccded78/)。为了防止超出限额，我在openAiConfig中增加AmnesiacMode用于控制。当AmnesiacMode为true时，我会判断当距离上一次对话的时间，当超出了配置memoryTime的值，则清除历史消息，默认设置的是2分钟，比鱼还不如。但其实并不是那么容易聊爆脑容量的，tokens与文本关系博文里面有对于链接。
+
+

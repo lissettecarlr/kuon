@@ -3,8 +3,7 @@ from loguru import logger
 import asyncio
 from cfg.botConfig import OpenAiConfig
 import os
-#from chatGPT.GPT3_5.openaiLib import Chatbot
-from chatGPT.GPT3_5.openaiApi import Chatbot
+from chatGPT.official.openaiApi import Chatbot
 
 class MultiplethinkingA:
     def __init__(self):

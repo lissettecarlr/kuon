@@ -6,6 +6,7 @@ cache
 /cfg/*.json
 chatbot.py
 Mirai
+GUI
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
