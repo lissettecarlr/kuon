@@ -2,22 +2,28 @@
 # 参考 https://platform.openai.com/docs/api-reference/completions/create
 # pip install --upgrade openai
 
+# OPENAI库方式是实现（由于改了人设加载方式，主程序又是使用的openaiApi，所有此文件修改搁置）
+
 import openai
 import sys
 import json
 import tiktoken
 import threading
 from loguru import logger
+import os
 
 class Chatbot:
-    def __init__(self,secret_key,temperature=0.7,preset="你现在是名字叫久远的AI",memoryTime=120) -> None:
+    def __init__(self,secret_key,preset=None,temperature=0.7,memoryTime=120) -> None:
         openai.api_key  = secret_key   # openai的secret key，在https://platform.openai.com/account/api-keys这个页面去创建
         self.model = "gpt-3.5-turbo"   # 或者 gpt-3.5-turbo-0301
         self.temperature = temperature # 请求时不传入默认为1 较高的值（如 0.8）将使输出更加随机，而较低的值（如 0.2）将使输出更加集中和确定
-        self.preset = preset # 预设人格
+        
         self.conversation = [] # 历史对话
+        self.preset = preset # 人设文件地址
+        #加载人设
+        self.init_conversation()
+        
         self.conversationMaxSize = 3000 # gpt-3.5-turbo模型最大tokens数为4096，这里设置3K是为了给应答留空间
-        self.clear_conversation()
         self.timer_last_conversation = None # 记忆的定时器
         self.memoryTime = memoryTime #记忆时间，单位秒，超时则清空对话历史，为0则不自动清除
 
@@ -50,24 +56,26 @@ class Chatbot:
         except Exception as e:
             return f"发生错误: {e}"
         
-    #清空历史对话
-    def clear_conversation(self):
-        self.conversation = [{"role": "system", "content": self.preset}]
+    # 初始化历史对话
+    def init_conversation(self):
+        if(self.preset is not None and os.path.exists(self.preset)):
+            self.load_conversation(self.preset)
+        else:
+            self.conversation=[]
 
-    #设置人格，也即最初的system消息
-    def set_preset(self,preset):
-        self.preset = preset
-        self.clear_conversation()
+    #取消人设
+    def clear_preset(self):
+        self.preset = None
+        self.init_conversation()
 
-    # 对于历史记录估计也主要用于调教人设。tokens的限制不可能一直保留历史
-    # 加载历史对话，会清空当前的对话历史（
+    # 加载历史对话，
     def load_conversation(self,file):
-        self.clear_conversation()
+        self.conversation = []
         try:
             with open(file, encoding="utf-8") as f:
                 self.conversation = json.load(f)
         except Exception as e:
-            return f"加载对话发送错误: {e}"
+            return False
         return True
     
     def save_conversation(self,file):

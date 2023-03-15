@@ -4,6 +4,7 @@ import asyncio
 from cfg.botConfig import OpenAiConfig
 import os
 from chatGPT.official.openaiApi import Chatbot
+import time
 
 class MultiplethinkingA:
     def __init__(self):
@@ -72,11 +73,14 @@ class MultiplethinkingA:
         if(message == "tokens"):
             return "当前消耗tokens={}".format(self.thinking.get_tokens_from_conversation())
         elif(message == "clear preset"):
-            self.thinking.set_preset()
+            self.thinking.clear_preset()
             return "清除人设完成"
         elif(message == "reset"):
-            self.thinking.clear_conversation()
+            self.thinking.init_conversation()
             return "清空聊天历史"
+        elif(message == "save"):
+            file = time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime())+".json"
+            return self.thinking.save_conversation(file)
         else:
             return "未知命令：{}".format(message)
         

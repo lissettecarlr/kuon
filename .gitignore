@@ -3,7 +3,9 @@ config.cfg
 __pycache__/
 python3.9/
 cache
-/cfg/*.json
+/cfg/bingCookies.json
+/cfg/botconfig.json
+/cfg/openAiConfig.json
 chatbot.py
 Mirai
 

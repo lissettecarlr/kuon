@@ -87,7 +87,7 @@ class wincore (QtWidgets.QMainWindow,Ui_MainWindow):
         elif(showType == "myslef"):
             color = "#1E90FF"
         else:
-            color = "#1E90FF"
+            color = "#0a0a0a"
         try:
             self.format.setTextOutline(
                 QPen(QColor(color), 0.7, Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin))

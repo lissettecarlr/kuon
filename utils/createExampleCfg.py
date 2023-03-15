@@ -46,7 +46,7 @@ if __name__ == '__main__':
                 "secretKey":"sk-xxx",
                 "temperature":0.7,
                 "isloadRPG":"False", #是否加载预设角色扮演
-                "preinstall":[],
+                "preinstall":"./cfg/kuon.json",
                 "AmnesiacMode":"True",
                 "memoryTime":120
             },f,indent=2)
