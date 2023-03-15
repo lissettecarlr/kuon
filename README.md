@@ -17,6 +17,7 @@
 
 #### 2023年3月15日：
 修改了文件夹的名称，gpt-4[申请](https://openai.com/waitlist/gpt-4-api)中。
+增加了界面方式使用
 
 #### 2023年3月12日：
 增加了gpt的代理方式请求，我这儿网络环境都是软理由那里就直接翻了，所以之前一直没被限制的概念，但考虑到便利性还是加上，现在可以在openAiConfig.json里面填充proxy，例如
@@ -35,6 +36,7 @@
     * 传颂之物的久远人设
     * 代理
 * bing会话AI
+* GUI方式运行
 
 ## 3 使用
 
@@ -87,6 +89,13 @@ python QQbot.py
 效果如下图：
 ![命令行图](./pic/2.png)
 
+#### GUI
+```
+python guiBot.py
+```
+效果如下：
+
+![命令行图](./pic/6.png)
 
 #### 交流中的规定
 ```
@@ -112,11 +121,13 @@ cmd:reset            清空历史记录
 │   MultiplethinkingB.py bingChat的思想，包含了bingChat的接口
 │   MultiplethinkingC.py 动漫磁链爬取
 │   QQbot.py 主程序，包含QQ消息的接收，调用chatgpt和bingChat获取应答，然后发送给QQ
+│   guiBot.py GUI方式直接运行   
 │   README.md
 │   requirements.txt
 │   test.py
 │
 ├───cache
+├───GUI 界面相关的文件
 ├───cfg
 │   │   bingCookies.json  保存bing的cookies
 │   │   botconfig.json    基础bot的一些配置  

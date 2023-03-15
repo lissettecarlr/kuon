@@ -21,6 +21,7 @@ class MultiplethinkingA:
         ):
             logger.error("openAiConfig.json 配置文件出错！请配置 OpenAI 的 session_token")
             return False
+        
         try:
             if(self.config["AmnesiacMode"] == "False"):
                 memoryTime = 0
@@ -43,8 +44,11 @@ class MultiplethinkingA:
             logger.warning("{} 初始化失败：{}".format(self.name, e))
             return False
         self.status = True
-        return True
 
+    def deactivate(self):
+        if(self.thinking is not None):
+            self.thinking.broken
+            
     # message：对话，id：谁说的
     async def response(self, message :str) -> str:
         # 从消息中去除keyword

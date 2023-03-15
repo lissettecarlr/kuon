@@ -34,8 +34,9 @@ class Chatbot:
         if proxy:
             self.post_url = proxy + "/v1/chat/completions"
             print("使用代理:{}".format(self.post_url))
-        
-    def __del__(self):
+
+    # 当不如使用时调用   
+    def broken(self):
         if self.timer_last_conversation is not None:
             self.timer_last_conversation.cancel()
 
@@ -68,6 +69,7 @@ class Chatbot:
             )
 
             if response.status_code != 200:
+                self.conversation.pop() # 对话失败，将输入从历史中移除
                 return f"请求错误: {response.status_code} {response.text}"
             else:
                 response_json = response.json()
@@ -142,6 +144,8 @@ class Chatbot:
     def __timeout_last_conversation(self):
         self.clear_conversation()
         logger.debug("超时，清空对话")
+
+    
 
 ## 测试用
 def get_input(prompt):

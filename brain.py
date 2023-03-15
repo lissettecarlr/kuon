@@ -38,7 +38,6 @@ def activateThinking(name="A"):
     else:
         return False
 
-
 # 切换思维
 def changeThinking(name="A"):
     global thinking
@@ -81,3 +80,6 @@ async def response(message, ghost="A"):
     # else:
     resp = await thinking.response(message)
     return resp
+
+def closs():
+    thinkingA.deactivate()
