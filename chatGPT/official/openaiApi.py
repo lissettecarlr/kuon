@@ -7,14 +7,17 @@ from loguru import logger
 import os
 
 class Chatbot():
-    def __init__(self,secret_key,proxy="",temperature=0.7,preset=None,memoryTime=120) -> None:
+    def __init__(self,secret_key,proxy="",temperature=0.7,preset=None,memoryTime=120,
+                  url = "https://api.openai.com/v1/chat/completions",
+                  model = "gpt-3.5-turbo",
+                 ) -> None:
         
         self.session = requests.Session()
-        self.post_url = "https://api.openai.com/v1/chat/completions"
+        self.post_url = url
         self.post_headers = {
             'Authorization': 'Bearer ' + secret_key
         }
-        self.model = "gpt-3.5-turbo"   # 或者 gpt-3.5-turbo-0301
+        self.model = model   # 或者 gpt-3.5-turbo-0301
         self.temperature = temperature # 请求时不传入默认为1 较高的值（如 0.8）将使输出更加随机，而较低的值（如 0.2）将使输出更加集中和确定
         self.conversationMaxSize = 3000 # gpt-3.5-turbo模型最大tokens数为4096，这里设置3K是为了给应答留空间
         
@@ -22,7 +25,7 @@ class Chatbot():
         self.conversation = [] # 历史对话
         self.timer_last_conversation = None # 记忆的定时器
         self.memoryTime = memoryTime #记忆时间，单位秒，超时则清空对话历史，为0则不自动清除
-         
+        self.proxy = proxy # 代理地址 
 
         #是否使用代理
         # if proxy:
@@ -32,8 +35,8 @@ class Chatbot():
         #     }
         #     print("使用代理:{}".format(proxy))
         #上面方式传入发现特么会报错连不上代理，暂时不晓得那里有问题，就先下面方式直接拼接url了
-        if proxy:
-            self.post_url = proxy + "/v1/chat/completions"
+        if self.proxy:
+            self.post_url = self.proxy + "/v1/chat/completions"
             print("使用代理:{}".format(self.post_url))
 
         self.init_conversation()
@@ -149,6 +152,18 @@ class Chatbot():
         self.init_conversation()
         logger.debug("超时，清空对话")
 
+
+    def self_introduction(self):
+        it = "api方案，使用{}模型，应答误差值为{}，限制tokens<{}，对话记忆时间为{}秒".format(self.model,self.temperature,self.conversationMaxSize,self.memoryTime)
+        if self.preset is None :
+            it += "，未加载人设"
+        else:
+            it += "，已加载人设"
+        if self.proxy is None or self.proxy == "":
+            it += "，未使用代理"
+        else:
+            it += "，使用代理:{}".format(self.proxy)
+        return it
     
 ## 测试用
 def get_input(prompt):

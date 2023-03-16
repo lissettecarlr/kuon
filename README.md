@@ -142,7 +142,7 @@ cmd:reset            清空历史记录
 │   │   
 │   │   
 │   │
-│   └───GPT3_5  对接chatgpt的代码
+│   └───official  对接chatgpt的代码
 │       │   openaiLib.py  使用openai python库
 │       │   openaiApi.py  直接post请求
 │       │

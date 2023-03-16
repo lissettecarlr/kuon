@@ -48,6 +48,9 @@ if __name__ == '__main__':
                 "isloadRPG":"False", #是否加载预设角色扮演
                 "preinstall":"./cfg/kuon.json",
                 "AmnesiacMode":"True",
-                "memoryTime":120
+                "memoryTime":120,
+                "proxy": "https://xxx",
+                "model" : "gpt-3.5-turbo",
+                "apiUrl" : "https://api.openai.com/v1/chat/completions"
             },f,indent=2)
 

@@ -34,7 +34,9 @@ class MultiplethinkingA:
                     secret_key = self.config["secretKey"],
                     preset = self.config["preinstall"],
                     memoryTime = memoryTime,
-                    proxy = self.config["proxy"]
+                    proxy = self.config["proxy"],
+                    url=self.config["apiUrl"],
+                    model=self.config["model"],
                 )
             else:
                 self.thinking = Chatbot(
@@ -81,6 +83,8 @@ class MultiplethinkingA:
         elif(message == "save"):
             file = time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime())+".json"
             return self.thinking.save_conversation(file)
+        elif(message == "info"):
+            return self.thinking.self_introduction()
         else:
             return "未知命令：{}".format(message)
         

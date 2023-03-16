@@ -62,12 +62,24 @@ class wincore (QtWidgets.QMainWindow,Ui_MainWindow):
         #按钮
         self.pushButton.setText('发送')
         self.pushButton.clicked.connect(self.send_msg)
-
         #文字
         self.format = QTextCharFormat()
         self.format.setFontPointSize(14)
         self.format.setTextOutline(QPen(QColor('#1E90FF'), 0.7, Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin))
- 
+        #显示窗体右键菜单
+        self.textBrowser.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.textBrowser.customContextMenuRequested.connect(self.showMenu)
+
+        self.contextMenu = QMenu(self)
+        self.clearBrowser = self.contextMenu.addAction('清空显示')
+        self.clearBrowser.triggered.connect(self.clearBrowserEvent)
+        self.clearPreset = self.contextMenu.addAction('清除人设')
+        self.clearPreset.triggered.connect(self.clearPresetEvent)
+        self.clearConversation = self.contextMenu.addAction('清空历史会话')
+        self.clearConversation.triggered.connect(self.clearConversationEvent)
+        self.showInfoTk = self.contextMenu.addAction('信息')
+        self.showInfoTk.triggered.connect(self.showInfoTkEvent)
+
     def robot_init(self):
         asyncio.run(brain.defaultActivate())
  
@@ -117,4 +129,18 @@ class wincore (QtWidgets.QMainWindow,Ui_MainWindow):
 
     def closeEvent(self,event):
         brain.closs()
+
+    def showMenu(self,pos):
+        self.contextMenu.exec_(QCursor.pos()) 
+
+    def clearBrowserEvent(self):
+        self.textBrowser.clear()
         
+    def clearPresetEvent(self):
+        self.createThreadChat("cmd:clear preset")
+    
+    def clearConversationEvent(self):
+        self.createThreadChat("cmd:reset")
+
+    def showInfoTkEvent(self):
+        self.createThreadChat("cmd:info")
