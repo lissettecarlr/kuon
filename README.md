@@ -9,9 +9,11 @@
 久远，一个简单的聊天机器人，目前使用mirai对接了QQ，支持bing和chatgpt。增加了爬取动漫磁链。该机器人很初级，所以代码少依赖少，一切的起点，慢慢迭代。
 
 ## 1 开发简述
-目前放弃acheong08/ChatGPT的方案，之后会用openai的官方接口gpt-3.5-turbo的模型，如果对之前版本有需求可以使用发布的v0.1.0版本。代码部分chatgpt相关将完全变动，bing不会改变。
+* 目前放弃acheong08/ChatGPT的方案，使用openai的官方接口gpt-3.5-turbo的模型，如果对之前版本有需求可以使用发布的v0.1.0版本。官方接口是付费的，但是注册的账号有3个月的免费额度，以目前官方接口[定价](https://openai.com/pricing)，正常使用大概率用不完。
 
-该模型写入人设比网页版的chatgpt稳定多了，注册的账号有3个月的免费额度，以目前官方接口[定价](https://openai.com/pricing)，我是肯定用不完。之后看是换个号继续，还是老老实实付API费用，也很便宜，就是卡麻烦。
+* 目前的GUI和命令行运行方式是为了方便测试，主要使用方式还是对接QQ，其他方式看情况对接，之前考虑微信但是看封号频繁，怕了。
+
+* 去年开始用gihub copilot，年前接触chatgpt，到如今这两个工具已经是我敲代码的一大助力，强烈建议诸位也接触接触
 
 ### 更新说明
 
@@ -21,7 +23,7 @@
 需改了人设加载方式，看官网说system的效力不强，要扔到user对话中
 
 #### 2023年3月12日：
-增加了gpt的代理方式请求，我这儿网络环境都是软理由那里就直接翻了，所以之前一直没被限制的概念，但考虑到便利性还是加上，现在可以在openAiConfig.json里面填充proxy，例如
+增加了gpt的代理方式请求，我这儿网络环境都是软路由那里就直接翻了，所以之前一直没被限制的概念，但考虑到便利性还是加上，现在可以在openAiConfig.json里面填充proxy，例如
 ```
 "proxy": "https://service-xxxxxx-xxxxxxx.jp.apigw.tencentcs.com"
 ```
@@ -125,9 +127,7 @@ cmd:reset            清空历史记录
 │   guiBot.py GUI方式直接运行   
 │   README.md
 │   requirements.txt
-│   test.py
 │
-├───cache
 ├───GUI 界面相关的文件
 ├───cfg
 │   │   bingCookies.json  保存bing的cookies
@@ -154,18 +154,20 @@ cmd:reset            清空历史记录
 │       │   utils.py
 │ 
 │ 
-├───temp
 ├───utils 一些工具
 │   │   createExampleCfg.py 创建默认配置，因为我没有上传配置，所有默认用它生成
 │   │   text_to_img.py  
 │   │   updateBingChat.py 
+│ 
+│ 
+├───doc 存放文档
+├───pic 存放文档图片
 ```
 
 ## 5 其他
 
 ### 人设
 现在人设文件被保存在cfg/kuon.json中，如果需要自定义可以修改openAiconfig.json中填写preinstall指向地址
-
 ```
 [
     {

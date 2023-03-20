@@ -2,7 +2,7 @@
 # 参考 https://platform.openai.com/docs/api-reference/completions/create
 # pip install --upgrade openai
 
-# OPENAI库方式是实现（由于改了人设加载方式，主程序又是使用的openaiApi，所有此文件修改搁置）
+# OPENAI库方式实现（由于改了人设加载方式，主程序又是使用的openaiApi，所有此文件修改搁置）
 
 import openai
 import sys

@@ -27,7 +27,7 @@ class Chatbot():
         self.memoryTime = memoryTime #记忆时间，单位秒，超时则清空对话历史，为0则不自动清除
         self.proxy = proxy # 代理地址 
 
-        #是否使用代理
+        # 是否使用代理
         # if proxy:
         #     self.session.proxies = {
         #         "http": proxy,
