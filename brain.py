@@ -2,6 +2,7 @@ from loguru import logger
 from MultiplethinkingA import MultiplethinkingA
 from MultiplethinkingB import MultiplethinkingB
 from MultiplethinkingC import MultiplethinkingC
+from MultiplethinkingD import MultiplethinkingD
 
 from cfg.botConfig import OpenAiConfig
 from cfg.botConfig import BotConfig
@@ -15,6 +16,7 @@ thinking = None
 thinkingA = MultiplethinkingA()
 thinkingB = MultiplethinkingB()
 thinkingC = MultiplethinkingC()
+thinkingD = MultiplethinkingD()
 
 # 启动时默认思维
 async def defaultActivate():
@@ -26,13 +28,15 @@ async def defaultActivate():
 
 # 激活思维
 def activateThinking(name="A"):
-    if name in ['A','B','C']:
+    if name in ['A','B','C','D']:
         if name == "A" and thinkingA.thinking is None:
             return thinkingA.activate()
         elif name == "B" and thinkingB.thinking is None:
             return thinkingB.activate()
         elif name == "C" and thinkingC.thinking is None:
             return thinkingC.activate()
+        elif name == "D" and thinkingD.thinking is None:
+            return thinkingD.activate()
         else:
             return True
     else:
@@ -47,6 +51,8 @@ def changeThinking(name="A"):
         thinking = thinkingB
     elif name == "C" and thinkingC.thinking is not None:
         thinking = thinkingC
+    elif name == "D" and thinkingD.thinking is not None:
+        thinking = thinkingD
     else:
         return False
     return True
@@ -68,6 +74,9 @@ def matchingThinking(text:str):
         for i in thinkingC.keyword:
             if i in character:
                 return "C",message
+        for i in thinkingD.keyword:
+            if i in character:
+                return "D",message
     else:
         return defaultThinking,text
 

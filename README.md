@@ -6,16 +6,18 @@
 </p>
 
 # KUON
-久远，一个简单的聊天机器人，目前使用mirai对接了QQ，支持bing和chatgpt。增加了爬取动漫磁链。该机器人很初级，所以代码少依赖少，一切的起点，慢慢迭代。
+久远，对接chatpgt的聊天机器人，目前使用mirai对接了QQ，支持bing和chatgpt，其中chatgpt支持api和网页模式，前者是gpt-3.5-turbo，后者是gpt4。额外有爬取动漫磁链功能，持续更新中。
 
 ## 1 开发简述
-* 目前放弃acheong08/ChatGPT的方案，使用openai的官方接口gpt-3.5-turbo的模型，如果对之前版本有需求可以使用发布的v0.1.0版本。官方接口是付费的，但是注册的账号有3个月的免费额度，以目前官方接口[定价](https://openai.com/pricing)，正常使用大概率用不完。
 
-* 目前的GUI和命令行运行方式是为了方便测试，主要使用方式还是对接QQ，其他方式看情况对接，之前考虑微信但是看封号频繁，怕了。
+* 目前只对接QQ，WX没敢对接怕被干掉了。看之后弄弄
+* chatgpt现在支持两种方式去连接，API方式需要付费，但是速度和稳定性比网页版好得多。网页版则是白嫖。两种都需要挂代理，[代理部署说明](./doc/proxy.md)。API由于我没gpt4资格，所以还是gpt-3.5-turbo的模型。网页端我订阅了plus，所以试过可用。
 
-* 去年开始用gihub copilot，年前接触chatgpt，到如今这两个工具已经是我敲代码的一大助力，强烈建议诸位也接触接触
 
 ### 更新说明
+
+#### 2023年3月28日：
+订阅了plus，3小时25条消息，感觉自己是个冤大头，然后我又真香地把acheong08/ChatGPT添加回来了，主要是gpt4的API申请下不来，想用还是得走这条路。
 
 #### 2023年3月15日：
 修改了文件夹的名称，gpt-4[申请](https://openai.com/waitlist/gpt-4-api)中。
@@ -38,6 +40,7 @@
     * 短时记忆，超时忘却，防止脑容量不够（tokens）
     * 传颂之物的久远人设
     * 代理
+* web方案的chatgpt，可使用gpt4或gpt3.5
 * bing会话AI
 * GUI方式运行
 
@@ -65,6 +68,12 @@ python utilty/createExampleCfg.py
     * mirai的配置，包括QQ号，验证码，mirai服务的地址
 * openAiConfig.json
     * chatgpt的key，没有可以去[这里](https://platform.openai.com/account/api-keys)创建一个
+    * 使用webgpt需要格外添加四个参数
+        *  "webProxy" : "代理地址"，具体见[代理部署说明](./doc/proxy.md)
+        *  "webEmail" : "你的账号名"
+        *  "webModel": "gpt-4" 使用的模型
+        *  "webAccessToke : "xxx"，去[复制AccessToke](https://chat.openai.com/api/auth/session)
+
 * bingCookies.json
     * bing的cookie，createExampleCfg不会创建它，如果要使用bing机器人则需要有个得到测试资格的账号，在bing.com页面去导出cookie，然后保存到bingCookies.json里
 
@@ -86,6 +95,7 @@ python QQbot.py
 
 ![QQ截图](./pic/1.png)
 
+![](./pic/7.png)
 #### 命令行
 测试工具，不对接QQ，本地命令行直接交流
 运行app.py即可，当然还是需要chatgpt和bing的配置。
@@ -105,6 +115,7 @@ python guiBot.py
 /chatgpt xxx  与思维A，也即chatgpt交流
 /bing xxx     与思维B，也即bing机器人交流
 /animate xxx  与思维C，可以搜索xxx动漫的下载磁链链接
+/gpt4 xxx     与思维D，使用的chatgpt的web方案，所以可用使用gpt4
 xxx           使用默认思维进行交流，在botconfig.json中配置
 ```
 
@@ -120,9 +131,10 @@ cmd:reset            清空历史记录
 ```
 │   app.py  不对接QQ，直接本地对话
 │   brain.py 脑袋，用于管理各个思想，也即不同的对话机器人
-│   MultiplethinkingA.py chatgpt的思想，包含了chatgpt的接口
+│   MultiplethinkingA.py chatgpt的思想，包含了chatgpt的接口，API方案
 │   MultiplethinkingB.py bingChat的思想，包含了bingChat的接口
 │   MultiplethinkingC.py 动漫磁链爬取
+│   MultiplethinkingD.py chatgpt的网页版（需要部署代理，位于utils中）    
 │   QQbot.py 主程序，包含QQ消息的接收，调用chatgpt和bingChat获取应答，然后发送给QQ
 │   guiBot.py GUI方式直接运行   
 │   README.md
@@ -158,6 +170,8 @@ cmd:reset            清空历史记录
 │   │   createExampleCfg.py 创建默认配置，因为我没有上传配置，所有默认用它生成
 │   │   text_to_img.py  
 │   │   updateBingChat.py 
+│   │   updateChatGPT.py
+│   │   chatgpt_proxy.py  网页方案的代理    
 │ 
 │ 
 ├───doc 存放文档

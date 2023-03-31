@@ -8,6 +8,8 @@ cache
 /cfg/openAiConfig.json
 chatbot.py
 Mirai
+test.py
+web
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
