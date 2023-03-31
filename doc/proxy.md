@@ -15,7 +15,7 @@ Ice-Hazymoon开源的方案，使用[openai-scf-proxy](https://github.com/Ice-Ha
 
 代码位于utils/chatgpt_proxy.py，使用flask框架。基于[这个仓库](https://github.com/acheong08/ChatGPT-Proxy-V4/issues?q=is%3Aissue+is%3Aclosed)改写的python版本，源于是更适合服务器部署的go。
 
-* 添加配置文件.env，里面填入ACCESS_TOKEN=xxx和PUID=XXX，前者自己打开[这里](https://chat.openai.com/api/auth/session)，后者在浏览器的cookies里找到puid的值。
+* 添加配置文件.env，里面填入ACCESS_TOKEN=xxx和PUID=XXX，前者自己打开[这里](https://chat.openai.com/api/auth/session)，后者在浏览器的cookies里找到puid的值，这个只能plus用户才看得到
 
 * 运行python chatgpt_proxy.py，得到代理地址
 
