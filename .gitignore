@@ -9,7 +9,7 @@ cache
 chatbot.py
 Mirai
 test.py
-web
+chatGPT/web/*.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

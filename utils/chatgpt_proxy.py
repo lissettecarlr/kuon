@@ -1,3 +1,7 @@
+# pip install python-dotenv
+# pip install requests
+# pip install flask
+
 import os
 import time
 from threading import Thread
