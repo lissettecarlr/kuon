@@ -1,9 +1,9 @@
 # 用于测试思维
 
 from loguru import logger
-from cfg.botConfig import BotConfig
+from cfg.config import BotConfig
 config = BotConfig.load_config()
-import brain
+import brain.Thinking as Thinking
 import asyncio
 
 def main():
@@ -41,17 +41,17 @@ def main():
             if handle_commands(user_input):
                 continue
 
-        tk,contents = brain.matchingThinking(user_input)
+        tk,contents = Thinking.matchingThinking(user_input)
         logger.info("切换到思维：{}".format(tk))
-        brain.activateThinking(tk) #激活
-        brain.changeThinking(tk) #切换
+        Thinking.activateThinking(tk) #激活
+        Thinking.changeThinking(tk) #切换
        
-        if brain.thinking is None:
+        if Thinking.thinking is None:
             logger.error("不存在激活的思维")
             return 
         
         print("Kuon: ")
-        res = asyncio.run(brain.response(contents))
+        res = asyncio.run(Thinking.response(contents))
         print(res,end="")
         # prev_text = ""
         # for data in chatbot.ask(
@@ -65,7 +65,7 @@ def main():
 
 
 def init():
-    res = asyncio.run(brain.defaultActivate())
+    res = asyncio.run(Thinking.defaultActivate())
     if(res):
         logger.info("思维A启动成功")
         return True

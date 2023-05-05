@@ -1,0 +1,5 @@
+{
+    "model":"./speakingvits/model/G_953000.pth",
+    "model_config":"./speaking/vits/model/config.json" ,
+    "output_path":"./temp/"
+}

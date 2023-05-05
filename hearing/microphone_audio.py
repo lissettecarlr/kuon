@@ -8,6 +8,7 @@ import threading
 from queue import Queue
 
 
+
 def record(status_queue=None, stop_recording_flag=None, config=None):
     sample_rate = 16000
     frame_duration = 30  # 30ms, supported values: 10, 20, 30
