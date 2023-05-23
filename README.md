@@ -15,9 +15,10 @@
 
 ## 2 目前功能
 
-* 语音输入
-* chatgpt对输入对话生成应答
-* 语音输出（可控声线）
+* paraformer方式语言转文本
+* whisper的openai接口方式语言转文本
+* chatgpt对话
+
 
 ## 3 使用
 
@@ -63,7 +64,102 @@ python .\utils\get_input_channels.py
 python kuon.py
 ```
 
-然后对着麦克风说话吧~
 
 
-## 4 文件说明
+
+## 语音输入
+
+### 本地麦克风方式
+
+依赖：
+
+* pyaudio
+
+
+
+### 云端语音输入
+（未实现）
+
+## 语音转文本
+
+### paraformer方式
+
+源码来自rapid的[RapidASR仓库](https://github.com/RapidAI/RapidASR/blob/main/README.md)
+
+#### 依赖
+* onnxruntime-gpu 或者 onnxruntime
+* numpy
+* librosa 用于音频分析和处理
+* pyyaml
+* typeguard==2.13.3
+
+
+
+### whisper方式
+
+#### 使用接口方式
+
+使openai的接口进行转换，需要key，请求方式来自[这里](https://platform.openai.com/docs/api-reference/audio)
+
+依赖:
+
+* openai
+* langid 检测语言的库（可选）
+
+### 本地部署方式
+（未实现）
+来自openai的开源仓库[whisper](https://github.com/openai/whisper)
+
+
+## 情感分析
+（未实现）
+
+## 思维
+
+接收消息->处理消息->输出消息
+
+消息格式传输格式示例
+```
+{"type": "auditory", "content": "你好"}
+{"type":"speech","content":"不好"}
+{"type":"cmd","content":"stop"}
+```
+
+### 灵魂
+进行对话的基础，通过短句形式输出，方便转化为语音
+
+#### chatgpt
+
+* 通过http请求进行对话
+* 代理
+* 短期对话记忆
+* 流式输出
+
+## 文本转语言
+
+### VITS
+
+可以通过这个[仓库](https://github.com/Plachtaa/VITS-fast-fine-tuning/blob/main/README_ZH.md)进行训练，这里的部署代码来自[huggingface](https://huggingface.co/spaces/zomehwh/vits-uma-genshin-honkai)。
+
+依赖：
+* 需要安装[pytorch](https://pytorch.org/hub/)，先看看本机的cuda版本，然后安装对应的pytorch版本，我这里是11.6:
+    ```
+    conda install pytorch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1 pytorch-cuda=11.6 -c pytorch -c nvidia
+    #或者
+    pip install torch==1.13.1+cu116 torchvision==0.14.1+cu116 torchaudio==0.13.1 --extra-index-url https://download.pytorch.org/whl/cu116
+    ```
+* 其他去这儿安装text_to_sepeech\vits\requirements.txt
+
+## 其他
+
+查看环境有无cuda：
+```
+nvcc --version
+
+nvcc: NVIDIA (R) Cuda compiler driver
+Copyright (c) 2005-2021 NVIDIA Corporation
+Built on Fri_Dec_17_18:28:54_Pacific_Standard_Time_2021
+Cuda compilation tools, release 11.6, V11.6.55
+Build cuda_11.6.r11.6/compiler.30794723_0
+```
+

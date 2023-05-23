@@ -145,3 +145,10 @@ model/
 out/
 temp_code/
 temp/*.*
+cfg/secret.yaml
+history_code
+*.wav
+
+#未实现 暂时屏蔽
+sentiment
+

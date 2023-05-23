@@ -1,8 +1,0 @@
-{
-    "openaiKey":"sk-",
-    "threshold":1500,
-    "channels":1,
-    "rate":48000,
-    "recordAudioQueueSize":10,
-    "recordTextQueueSize":10
-}

@@ -1,0 +1,31 @@
+include : secret.yaml
+
+ASR :
+  parafomer : True
+  whisper_online : True
+
+local_microphone:
+  switch : True
+  threshold : 1500
+  channels : 1
+  rate : 48000 
+  queue_size : 10
+
+network_input:
+  swtich : False
+
+chatgpt:
+  temperature : 0.7
+  amnesiac_mode : True
+  memoryTime : 120
+  rpg_mode : True
+  preinstall : ./cfg/kuon.json
+
+
+TTS:
+  VITS:
+    switch : True
+    model_path : text_to_sepeech/vits/model/G_953000.pth
+    config_path : text_to_sepeech/vits/model/config.json
+    speaker : 0
+

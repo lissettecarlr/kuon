@@ -1,6 +1,32 @@
+
+
+
+from pathlib import Path
+import yaml
+from typing import Dict, Union
+
+def read_yaml(yaml_path: Union[str, Path]) -> Dict:
+    if not Path(yaml_path).exists():
+        raise FileExistsError(f'The {yaml_path} does not exist.')
+
+    with open(str(yaml_path), 'rb') as f:
+        data = yaml.load(f, Loader=yaml.Loader)
+
+    # 如果存在include字段，则递归读取include的yaml文件
+    
+    if 'include' in data:
+        include = data.pop('include')
+
+        if isinstance(include, str):
+            include = [include]
+        for i in include:
+            data.update(read_yaml(Path(yaml_path).parent / i))
+    return data
+
+
+
 from json import load, dump
 from threading import Lock
-
 
 class KuonStatus:
     lock = Lock()
