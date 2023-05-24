@@ -62,7 +62,7 @@ class LocalMicrophone(threading.Thread):
                     logger.debug("检测到人声，开始录制")
                     recording=True
             else:
-                while self.exit_flag:
+                while True:
                     logger.debug("持续录音中...")
                     subframes=[]
                     for i in range(0, 5):
@@ -72,12 +72,13 @@ class LocalMicrophone(threading.Thread):
 
                     audio_data = np.frombuffer(b''.join(subframes), dtype=np.int16)
                     temp = np.max(audio_data)
+
                     if temp <= self.threshold*0.8:
                         nowavenum+=1
                     else:
                         nowavenum=0
 
-                    if nowavenum>=1:
+                    if nowavenum>=1 or self.exit_flag == False:
                         logger.debug("录制结束")
                         j=1
                         while j>0:
@@ -99,6 +100,9 @@ class LocalMicrophone(threading.Thread):
                         nowavenum=0
                         frames=[]
                         recording=False
+
+                        if(self.exit_flag == False):
+                            return
                         break
                     
         stream.stop_stream()

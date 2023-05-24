@@ -12,17 +12,19 @@ class auditory():
         self.audio_queue = Queue(maxsize=config['local_microphone']['queue_size'])
 
         self.ch_list = []
+
+        # 本地麦克风
         if(config['local_microphone']['switch'] == True):
             from auditory_sense.local_microphone import LocalMicrophone
             ch = {"service":LocalMicrophone(config['local_microphone'],self.audio_processed_event,self.audio_queue),"name":"local_microphone"}
             self.ch_list.append(ch)
             
+    def start(self):
         # 启动线程
         for ch in self.ch_list:
             ch['service'].start()
-    
 
-    def exit(self):
+    def stop(self):
         for ch in self.ch_list:
             ch['service'].exit()
 
