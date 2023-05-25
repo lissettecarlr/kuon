@@ -24,8 +24,9 @@ class ASR():
             if ch['name'] == ch_name:
                 service = ch['service']
                 break
+        logger.debug("开始语音转文本")    
         start_time = time.time()            
         result = service.infer(audio_path)    
-        logger.debug("文件 {} ,使用 {} ,转换耗时:{}，结果：{}".format(audio_path,ch_name,round(time.time()-start_time,2),result))
+        logger.debug("结束语音转文本，文件 {} ,使用 {} ,转换耗时:{}，结果：{}".format(audio_path,ch_name,round(time.time()-start_time,2),result))
         return result
     

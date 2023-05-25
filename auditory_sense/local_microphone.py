@@ -10,7 +10,7 @@ from queue import Queue
 import tempfile
 
 class LocalMicrophone(threading.Thread):
-    def __init__(self,config,event:Event,audio_queue):
+    def __init__(self,config,event:threading.Event,audio_queue):
         super().__init__()
         self.event = event
         self.config = config
@@ -24,6 +24,10 @@ class LocalMicrophone(threading.Thread):
 
         self.exit_flag = True
         logger.info("init LocalMicrophone")
+    
+    def bind_event(self,event:threading.Event):
+        self.event = event
+
     # 退出线程
     def exit(self):
         self.exit_flag = False
@@ -94,7 +98,7 @@ class LocalMicrophone(threading.Thread):
                                 wf.writeframes(b''.join(frames))
                         logger.debug("保存： {}".format(temp_audio_file.name))
                         # 将保存的录音地址存入队列，并且发出事件
-                        self.audio_queue.put(temp_audio_file.name)
+                        self.audio_queue.put_nowait(temp_audio_file.name)
                         self.event.set()
 
                         nowavenum=0

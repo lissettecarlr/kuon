@@ -13,6 +13,7 @@ class TTS():
             ch = {"service":service,"name":"vits"}
             self.ch_list.append(ch)
         self.count = 0
+        
     # 选择一个进行转换
     def convert(self,text,ch_name = 'vits'):
         # 通过ch_name找到service

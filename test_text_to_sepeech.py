@@ -3,7 +3,6 @@
 import wave
 import numpy as np
 import pyaudio
-from text_to_sepeech.TTService import TTService
 
 def test_tts():
     from text_to_sepeech.tts import TTS

@@ -73,9 +73,35 @@ class TextToAudio():
         return audio
 
     def save(self,audio,save_path):
-        write(save_path, self.hps_ms.data.sampling_rate, audio)
+        import pyaudio
+        import numpy as np
+        import wave
+        p = pyaudio.PyAudio()
+        stream = p.open(format=pyaudio.paFloat32,
+                    channels=1,
+                    rate=self.hps_ms.data.sampling_rate,
+                    output=True
+                    )
+        data = audio.astype(np.float32).tostring()
+        stream.write(data)
+        num_channels = 1
+        sample_width = 2  # Assuming 16-bit audio
+        frame_rate = self.hps_ms.data.sampling_rate
+        audio_int16 = (audio * np.iinfo(np.int16).max).astype(np.int16)
+        with wave.open(save_path, 'wb') as wav_file:
+            wav_file.setnchannels(num_channels)
+            wav_file.setsampwidth(sample_width)
+            wav_file.setframerate(frame_rate)
+            wav_file.writeframes(audio_int16.tobytes())
+
+        #write(save_path, self.hps_ms.data.sampling_rate, audio)
         #logger.debug("保存语音文件到：{}".format(save_path))
         return save_path
+    
+
+
+        
+
 
 if __name__ == "__main__":
     text = "你好，这是一段测试文字转语音的文本。"

@@ -36,13 +36,14 @@ class SepeechThread(threading.Thread):
     def run(self):
         logger.info("语音播放线程启动")
         while(self.exit_flag):
-            if(self.audio_queue.empty() == False):
+            while(not self.audio_queue.empty()):
                 audio_path = self.audio_queue.get()
                 self.player = AudioPlayer(audio_path)
                 self.player.play()
+                #等待播放完成
                 while(self.player.is_alive() and self.exit_flag):
                     time.sleep(0.1)
-            time.sleep(0.5)
+            time.sleep(0.5)    
         logger.info("语音播放线程退出")
 
             

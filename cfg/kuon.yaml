@@ -2,7 +2,7 @@ include : secret.yaml
 
 ASR :
   parafomer : True
-  whisper_online : True
+  whisper_online : False
 
 local_microphone:
   switch : True
