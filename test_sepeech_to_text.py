@@ -29,8 +29,8 @@ def test_asr():
     config = read_yaml(r'cfg/kuon.yaml')
     asr = ASR(config)
     wav_path = r'sepeech_to_text\0478_00017.wav'
-    #asr.convert(wav_path,'parafomer')
-    asr.convert(wav_path,'whisper_online')
+    asr.convert(wav_path,'parafomer')
+    #asr.convert(wav_path,'whisper_online')
 
 if __name__ == '__main__':
     #test_paraformer()

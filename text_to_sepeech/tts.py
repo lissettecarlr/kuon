@@ -13,7 +13,7 @@ class TTS():
             ch = {"service":service,"name":"vits"}
             self.ch_list.append(ch)
         self.count = 0
-        
+
     # 选择一个进行转换
     def convert(self,text,ch_name = 'vits'):
         # 通过ch_name找到service
@@ -26,7 +26,7 @@ class TTS():
         start_time = time.time()            
         result = service.infer(text)
         #将时间作为文件名   
-        result = service.save(result,'text_to_sepeech/temp/{}.wav'.format(str(self.count)))
+        result = service.save(result,'text_to_sepeech/temp/{}'.format(str(self.count)))
         self.count += 1 
         logger.debug("转语言文件 {} ,使用 {} ,转换耗时:{}，结果：{}".format(text,ch_name,round(time.time()-start_time,2),result))
         return result

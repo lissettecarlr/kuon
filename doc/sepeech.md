@@ -10,7 +10,7 @@
    * Lib\site-packages\playsound.py，中移除使用utf-16进行解码的部分
 
 
-## vlc（存在问题）
+## vlc
 
 ### 安装
 
@@ -19,13 +19,7 @@
 * 将vlc的路径加入环境变量
 * 在python中输入import vlc，如果没有报错，则安装成功
 
-### 问题
 
-在播放模型输出的音频是报错：
-```
-[000001ed5f9df650] wasapi generic error: cannot negotiate audio format (error 0x88890008)
-```
-原因是音频文件的采样率或位深度不兼容，音频的参数可在模型配置文件见到，虽然可以对输出文件进行一次转换，但是多个步骤，算了换一种。
 
 ## pydub
 

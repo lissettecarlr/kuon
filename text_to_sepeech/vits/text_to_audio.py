@@ -88,7 +88,7 @@ class TextToAudio():
         sample_width = 2  # Assuming 16-bit audio
         frame_rate = self.hps_ms.data.sampling_rate
         audio_int16 = (audio * np.iinfo(np.int16).max).astype(np.int16)
-        with wave.open(save_path, 'wb') as wav_file:
+        with wave.open(save_path+".wav", 'wb') as wav_file:
             wav_file.setnchannels(num_channels)
             wav_file.setsampwidth(sample_width)
             wav_file.setframerate(frame_rate)
@@ -96,7 +96,12 @@ class TextToAudio():
 
         #write(save_path, self.hps_ms.data.sampling_rate, audio)
         #logger.debug("保存语音文件到：{}".format(save_path))
-        return save_path
+
+        from pydub import AudioSegment
+        audio_file = AudioSegment.from_wav(save_path+'.wav')
+        audio_file.export(save_path+'.mp3', format="mp3")  
+
+        return save_path+'.mp3'
     
 
 

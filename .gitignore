@@ -148,7 +148,7 @@ temp/*.*
 cfg/secret.yaml
 history_code
 *.wav
-
+*.mp3
 #未实现 暂时屏蔽
 sentiment
 

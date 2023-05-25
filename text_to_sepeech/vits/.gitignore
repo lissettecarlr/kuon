@@ -380,3 +380,5 @@ monotonic_align/core.c
 /dist
 
 .idea
+
+*.mp3

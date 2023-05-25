@@ -20,10 +20,17 @@ class ASR():
     # 选择一个进行转换
     def convert(self,audio_path,ch_name = 'parafomer'):
         # 通过ch_name找到service
+        if(self.ch_list == []):
+            raise ValueError("ch_list is empty")
+     
+        print(self.ch_list)
+        print(ch_name)
         for ch in self.ch_list:
             if ch['name'] == ch_name:
                 service = ch['service']
+                print(11111111111)
                 break
+                
         logger.debug("开始语音转文本")    
         start_time = time.time()            
         result = service.infer(audio_path)    
