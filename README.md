@@ -6,7 +6,7 @@
 </p>
 
 # KUON
-久远，对接chatpgt的聊天机器人，目前使用mirai对接了QQ，支持bing和chatgpt，其中chatgpt支持api和网页模式，前者是gpt-3.5-turbo，后者是gpt4。额外有爬取动漫磁链功能，持续更新中。
+久远，对接chatpgt的聊天机器人，目前使用mirai对接了QQ，支持bing和chatgpt，其中chatgpt支持api和网页模式，前者是gpt-3.5-turbo，后者是gpt4。额外有爬取动漫磁链功能。已停止更新，目前在更新real分支的语音助手。
 
 ## 1 开发简述
 
