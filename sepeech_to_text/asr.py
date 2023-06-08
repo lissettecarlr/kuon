@@ -28,7 +28,6 @@ class ASR():
         for ch in self.ch_list:
             if ch['name'] == ch_name:
                 service = ch['service']
-                print(11111111111)
                 break
                 
         logger.debug("开始语音转文本")    

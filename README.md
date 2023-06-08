@@ -1,4 +1,4 @@
-[首页](./README.md) | [历史的QQ_bot](./doc/README_QQ_BOT.md) | [语音输入](./doc/auditory_sense.md)
+[首页](./README.md) | [历史的QQ_bot](./doc/README_QQ_BOT.md) | [语音输入](./doc/auditory_sense.md) | [语音转文本](./doc/sepeech_to_text.md)
 <p align="center">
  <img src="./pic/logo.png" align="middle" width = "300"/>
 <p align="center">
@@ -6,11 +6,12 @@
 
 # KUON
 
-久远，一个对接chatgpt的语音助手
+久远，一个对接chatgpt的语音助手。使用筛选重组后的虚伪的假面字幕作为历史对话，形成久远的人设。
 
 ## 1 开发简述
 
 历史版本文档可以由上方导航栏进行切换，或者切换到main分支，当前分支位real，目前旨在开发一个语音助手，最终目的还是做一个纸片人老婆。
+
 
 ## 2 目前功能
 
@@ -20,13 +21,24 @@
 * vits的文本转语音
 * 语音播放
 * 语音接收
+* 传颂之物久远人设
 
 ## 3 使用
 
 ### 3.1 环境
+
 ```
 Python 3.10
 pip install -r requirements.txt
+```
+
+或者使用conda的配置
+```
+conda create --name kuon --file environment.yml
+```
+配置来自我这儿的环境，开发过程中可能安装了额外的包。
+```
+conda env export > environment.yml
 ```
 
 ### 3.2 配置

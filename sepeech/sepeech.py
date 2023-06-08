@@ -19,6 +19,8 @@ class SepeechThread(threading.Thread):
             self.audio_queue.put(audio_path)
         else:
             raise ValueError("audio_path is not exists")
+        
+        #print("1111 audio_queue size:{}".format(self.audio_queue.qsize()))
 
     def exit(self):
         if(self.player != None):
@@ -37,13 +39,15 @@ class SepeechThread(threading.Thread):
         logger.info("语音播放线程启动")
         while(self.exit_flag):
             while(not self.audio_queue.empty()):
+                print("开始播放")
                 audio_path = self.audio_queue.get()
                 self.player = AudioPlayer(audio_path)
                 self.player.play()
                 #等待播放完成
                 while(self.player.is_alive() and self.exit_flag):
                     time.sleep(0.1)
-            time.sleep(0.5)    
+                print("播放完成")
+            time.sleep(0.1)    
         logger.info("语音播放线程退出")
 
             

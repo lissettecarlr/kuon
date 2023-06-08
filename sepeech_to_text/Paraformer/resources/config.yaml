@@ -22,7 +22,7 @@ WavFrontend:
 
 Model:
   model_path: sepeech_to_text/Paraformer/resources/models/model.onnx
-  use_cuda: false
+  use_cuda: true
   CUDAExecutionProvider:
       device_id: 0
       arena_extend_strategy: kNextPowerOfTwo

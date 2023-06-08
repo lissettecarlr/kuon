@@ -2,7 +2,6 @@ from loguru import logger
 from queue import Queue
 import time
 import threading
-import concurrent.futures
 # 模块
 from auditory_sense.auditory_sense import auditory
 from sepeech_to_text.asr import ASR
@@ -20,7 +19,7 @@ class input_message_thread(threading.Thread):
         super().__init__()
         self.event = threading.Event()
         self.config = read_yaml(r'cfg/kuon.yaml')
-
+    
         if "audio_reception" in modules:
             self.audio_reception = modules["audio_reception"]
             self.audio_reception.bind_event(self.event)
@@ -37,7 +36,7 @@ class input_message_thread(threading.Thread):
         
         # 绑定事件组 
         # self.events = [self.event,self.audio_reception.audio_processed_event]
-
+    
     def run(self):
         while(self.exit_flag):
             self.event.wait()
@@ -45,7 +44,7 @@ class input_message_thread(threading.Thread):
             if(self.exit_flag == False):
                 break
             self.audio_input_loop()
-  
+    
     def exit(self):
         self.exit_flag = False
         self.event.set()
@@ -146,12 +145,12 @@ class kuon():
         # 播放器
         self.player = SepeechThread()
 
-        # 输入消息处理线程，用于将所有输入消息转化为固定通信格式
         modules = { "audio_reception":self.audio_reception,
                     "asr":self.asr,
                     "player":self.player,
                     "tts":self.tts
                 }
+        # 输入消息处理线程，用于将所有输入消息转化为固定通信格式
         self.input_message_manager = input_message_thread(self.input_msg_queue,modules)
         # 输出消息处理线程
         self.output_message_manager = output_message_thread(self.output_msg_queue,modules)
@@ -177,7 +176,7 @@ if __name__ == "__main__":
     kuon.start()
 
     ## 测试代码
-    title = "请输入指令（a-录制，b-停止录制，exit-退出）"
+    title = "请输入指令（a-启动语言输入，b-停止语音输入，exit-退出）"
     while True:
         user_input = input("{} :".format(title))
         if user_input == "a":

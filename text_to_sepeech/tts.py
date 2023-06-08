@@ -28,7 +28,7 @@ class TTS():
         #将时间作为文件名   
         result = service.save(result,'text_to_sepeech/temp/{}'.format(str(self.count)))
         self.count += 1 
-        logger.debug("转语言文件 {} ,使用 {} ,转换耗时:{}，结果：{}".format(text,ch_name,round(time.time()-start_time,2),result))
+        logger.debug("转语言文本 {} ,使用 {} ,转换耗时:{}，结果：{}".format(text,ch_name,round(time.time()-start_time,2),result))
         return result
     
 
