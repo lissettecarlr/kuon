@@ -5,11 +5,12 @@ from queue import Queue
 from loguru import logger
 import time
 
+
 class TextInput(threading.Thread):
-    def __init__(self,event:threading.Event=None) -> None:
+    def __init__(self, event: threading.Event = None) -> None:
         super().__init__()
         # 该事件用于通知外部有新的文本输入
-        if(event == None):
+        if event == None:
             self.event = threading.Event()
         else:
             self.event = event
@@ -23,8 +24,8 @@ class TextInput(threading.Thread):
         self.exit_flag = False
         self.event.set()
 
-    #绑定事件
-    def bind_event(self,event:threading.Event):
+    # 绑定事件
+    def bind_event(self, event: threading.Event):
         self.event = event
 
     def run(self):
@@ -33,7 +34,7 @@ class TextInput(threading.Thread):
             try:
                 self.text = input(self.show_text).strip()
             except UnicodeDecodeError:
-                print('[ERROR] Encoding error in input')
+                print("[ERROR] Encoding error in input")
             except KeyboardInterrupt:
                 break
 
@@ -45,20 +46,18 @@ class TextInput(threading.Thread):
                 time.sleep(1)
 
         logger.info("文本输入线程退出")
-            
+
 
 if __name__ == "__main__":
     text_input = TextInput()
     text_input.start()
-   
+
     while True:
         text_input.event.wait()
         text_input.event.clear()
         while not text_input.text_queue.empty():
             text = text_input.text_queue.get_nowait()
             print("输入的文本：{}".format(text))
-            if(text == "q" or text == "exit"):
+            if text == "q" or text == "exit":
                 text_input.exit()
                 exit()
-    
-

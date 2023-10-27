@@ -17,17 +17,17 @@ def check_speech():
         return False
 
 
-
 # 测试语音合成
 def check_tts():
     print("语音合成测试开始")
     from kuontts import TTS
+
     tts = TTS()
     temp_file = "./temp/tts-test.wav"
     if os.path.exists(temp_file):
         # 删除文件
         os.remove(temp_file)
-    res = tts.convert(text="你好，很高兴认识你",save_path=temp_file)
+    res = tts.convert(text="你好，很高兴认识你", save_path=temp_file)
     if res == None:
         print("语音合成失败")
         return False
@@ -41,6 +41,7 @@ def check_tts():
 def check_asr():
     print("语音转文字测试开始")
     from kuonasr import ASR
+
     asr = ASR()
     try:
         result = asr.convert("./kuonasr/audio/asr_example.wav")
