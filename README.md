@@ -1,4 +1,4 @@
-[首页](./README.md) | [历史的QQ_bot](./doc/README_QQ_BOT.md) | [语音输入](./doc/auditory_sense.md) | [语音转文本](./doc/sepeech_to_text.md)
+[首页](./README.md) | 
 <p align="center">
  <img src="./pic/logo.png" align="middle" width = "300"/>
 <p align="center">
@@ -6,7 +6,7 @@
 
 # KUON
 
-久远，一个对接chatgpt的语音助手。使用筛选重组后的虚伪的假面字幕作为历史对话，形成久远的人设。
+久远，一个开发中的语音助手。
 
 ## 1 开发简述
 
