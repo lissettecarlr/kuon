@@ -131,8 +131,7 @@ class digestion_output_thread(threading.Thread):
         from kuontts import TTS
         self.tts = TTS()
 
-        from kuontts import TTS
-
+  
     def run(self):
         logger.info("信息输出线程启动")
         audio_num = 0
@@ -145,8 +144,7 @@ class digestion_output_thread(threading.Thread):
                 # 该任务是播放语音的话
                 if(msg["type"] == "speech"):
                     # 将文本转化为语音
-                    
-                    audio_path = tts.convert(msg["content"],"./temp/tts-{}.wav".format(audio_num))
+                    audio_path = self.tts.convert(msg["content"],"./temp/tts-{}.wav".format(audio_num))
                     audio_num += 1
                     # 添加进入播放列表
                     self.player.input_audio(audio_path)
