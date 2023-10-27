@@ -1,0 +1,5 @@
+url : 
+key : 
+model : Qwen-7B
+timeout : 120
+preset : ./llm/kuon.json

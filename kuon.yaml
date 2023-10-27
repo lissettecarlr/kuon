@@ -1,0 +1,18 @@
+
+TTS:
+  api_url:  "http://172.19.100.38:20003/tts/convert"
+
+# 日志，只显示INFO及其以上
+log_sw : True
+
+# 停止当前播放的语音的命令词
+voice_stop_cmd : ["stop","停止","别说了"]
+
+# 是否开启语音输出
+voice_output_sw : True
+
+# 是否开启文本输出
+text_output_sw : True
+
+# 是否启动时开启语音输入
+audio_input_sw : False

@@ -1,0 +1,8 @@
+# 选择什么方式
+channel : funasr    # funasr  、 whisper_online 、parafomer
+
+OPENAI:
+  key: sk-xxx
+
+funasr:
+   url: ws://172.0.0.1:1234

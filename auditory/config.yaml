@@ -1,0 +1,6 @@
+local_microphone:
+  switch : True
+  threshold : 1500
+  channels : 1
+  rate : 48000 
+  queue_size : 10

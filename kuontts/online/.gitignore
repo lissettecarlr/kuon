@@ -138,13 +138,17 @@ venv.bak/
 .dmypy.json
 dmypy.json
 
-# 语言转文字
-kuonasr/config.yaml
-script/AutomaticSpeechRecognition
-
-# 文本转语音
-script/TextToSepeech
-
-# 其他
-temp/*.wav
-# *.wav
+# Pyre type checker
+.pyre/
+denoised_audio/*.wav
+monotonic_align/monotonic_align
+OUTPUT_MODEL/*.pth
+pretrained_models/*.pth
+raw_audio/*.wav
+sampled_audio4ft
+segmented_character_voice/
+separated/
+final_annotation_train.txt
+final_annotation_val.txt
+long_character_anno.txt
+sampled_audio4ft.txt
