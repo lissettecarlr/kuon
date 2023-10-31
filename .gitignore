@@ -148,3 +148,4 @@ script/TextToSepeech
 # 其他
 temp/*.wav
 # *.wav
+llm/kuon.json_gpt

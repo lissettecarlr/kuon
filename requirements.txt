@@ -1,4 +1,4 @@
-gitpython
+GitPython>=3.1.37
 loguru
 tiktoken
 pyyaml

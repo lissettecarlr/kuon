@@ -86,19 +86,19 @@ class input_message_thread(threading.Thread):
             # 将转换结果存入消息队列
             if audio_text != "":
                 msg = {"from": "audio", "content": audio_text}
-            self.input_message_queue.put_nowait(msg)
-            self.output_event.set()
+                self.input_message_queue.put_nowait(msg)
+                self.output_event.set()
 
         # 处理文本输入内容
         while not self.text_input.text_queue.empty():
             if self.exit_flag == False:
                 return
-            # 取出文本
             text = self.text_input.text_queue.get_nowait()
-            # 将文本存入消息队列
-            msg = {"from": "text", "content": text}
-            self.input_message_queue.put_nowait(msg)
-            self.output_event.set()
+            if text != "":
+                # 将文本存入消息队列
+                msg = {"from": "text", "content": text}
+                self.input_message_queue.put_nowait(msg)
+                self.output_event.set()
 
         if self.exit_flag == False:
             return
@@ -172,11 +172,10 @@ class digestion_output_thread(threading.Thread):
 
 def kuon():
     config = read_yaml("kuon.yaml")
-    if config["log_sw"] == True:
+    if config["log_filter"] == True:
         import sys
-
         logger.remove()
-        logger.add(sys.stderr, level="INFO")
+        logger.add(sys.stderr, level=config["log_filter_level"])
     # 该队列用于存放输入消息
     input_msg_queue = Queue()
     output_msg_queue = Queue()

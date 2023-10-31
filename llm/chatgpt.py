@@ -9,7 +9,7 @@ from loguru import logger
 import os
 
 class Chatgpt():
-    def __init__(self,secret_key,temperature=0.7,preset=None,
+    def __init__(self,secret_key,temperature=0.9,preset=None,
                   memoryTime=120, # 对话保存时间
                   url = "https://api.openai.com/v1/chat/completions",
                   model = "gpt-3.5-turbo-16k",

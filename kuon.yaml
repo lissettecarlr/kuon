@@ -2,8 +2,10 @@
 TTS:
   api_url:  "http://172.19.100.38:20003/tts/convert"
 
-# 日志，只显示INFO及其以上
-log_sw : False
+# 日志过滤器
+log_filter : True
+log_filter_level : DEBUG
+
 
 # 停止当前播放的语音的命令词
 voice_stop_cmd : ["stop","停止","别说了"]
