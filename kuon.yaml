@@ -1,7 +1,3 @@
-
-TTS:
-  api_url:  "http://172.19.100.38:20003/tts/convert"
-
 # 日志过滤器
 log_filter : True
 log_filter_level : DEBUG

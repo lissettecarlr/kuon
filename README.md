@@ -86,7 +86,7 @@ cd script
 python tts_update.py
 ```
 
-默认使用了接口方式，也即这里无需安装环境，也无需放入模型，只需要修改`kuontts/config.yaml`里的请求url。其他使用方式和服务部署请移步[TextToSpeech](https://github.com/lissettecarlr/TextToSpeech)仓库说明。
+默认使用了接口方式，也即这里无需安装环境，也无需放入模型，需要根据不是的服务修改`kuontts/config.yaml`里的请求url和speaker。服务部署和其他使用方式请移步[TextToSpeech](https://github.com/lissettecarlr/TextToSpeech)仓库说明。
 
 
 
@@ -119,10 +119,40 @@ log_filter : True
 log_filter_level : WARNING
 ```
 
+在根目录的配置文件修改一些默认选项
+```yaml
+# 是否开启语音输出
+voice_output_sw : True
+
+# 是否开启文本输出
+text_output_sw : True
+
+# 是否启动时开启语音输入
+audio_input_sw : False
+```
+
+启动
 ```bash
 python kuon.py
 ```
 
+### 3.4 对话效果
+
+该效果主要受到模型和提示词的影响，通过在llm/config.yaml中配置。需要注意的是目前gpt提示词我是通过动画字幕进行填写，量会很大，当使用付费api时会急速消耗token哦。看之后针对效果进行精简。
+
+#### GPT4
+
+![gpt35](./pic/gpt4.png)
+
+#### gpt3.5
+
+![gpt35](./pic/gpt35.png)
+
+#### qwen-7b
+
+非常容易重复回答，不太适应目前大量的提示词，该模型感觉在特化了知识问答方向后其他能力变弱了。
+
+![qwen](./pic/qwen-chat.png)
 
 
 ## 4 其他

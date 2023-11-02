@@ -14,9 +14,11 @@ class TTS:
         elif config['channel'] == 'online':
             from .online import OnlineTTS
             self.server = OnlineTTS(config["api_url"])
-    
+        self.speaker = config["speaker"]
+
     def convert(self,text:str,save_path:str=None):
-        res,audio = self.server.run(text=text,save_path=save_path)
+        
+        res,audio = self.server.run(text=text,save_path=save_path,speaker=self.speaker)
         if res == 'Success':
             return audio
         else:

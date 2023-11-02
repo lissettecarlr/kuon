@@ -1,5 +1,14 @@
-url : 
-key : 
-model : Qwen-7B
+url : https://xxx
+key : sk-xxx
+#model : gpt-3.5-turbo-16k
+model : gpt-4
+preset : ./llm/kuon_gpt.json
+
+
+#url : http://xxx
+#key : qmdr-xxx
+#model : Qwen-7B
+#preset : ./llm/kuon.json
+
+# 不进行对话多久后遗忘
 timeout : 120
-preset : ./llm/kuon.json
