@@ -150,12 +150,13 @@ class digestion_output_thread(threading.Thread):
                 # 该任务是播放语音的话
                 if msg["type"] == "speech":
                     # 将文本转化为语音
-                    audio_path = self.tts.convert(
-                        msg["content"], "./temp/tts-{}.wav".format(audio_num)
+                    audio_save_path = "./temp/tts-{}.wav".format(audio_num)
+                    audio = self.tts.convert(
+                       text = msg["content"], save_path = audio_save_path
                     )
                     audio_num += 1
                     # 添加进入播放列表
-                    self.player.input_audio(audio_path)
+                    self.player.input_audio(audio_save_path)
 
                 # 停止播放语音
                 if msg["type"] in self.config["voice_stop_cmd"]:
@@ -205,78 +206,81 @@ def kuon():
         if config["voice_output_sw"] == True:
             msg = {"type": "speech", "content": text}
             output_msg_queue.put_nowait(msg)
+    try:
+        while True:
+            input_message_manager.output_event.wait()
+            input_message_manager.output_event.clear()
 
-    while True:
-        input_message_manager.output_event.wait()
-        input_message_manager.output_event.clear()
-
-        while not input_msg_queue.empty():
-            msg = input_msg_queue.get_nowait()
-            logger.debug("接收到消息：{}".format(msg))
-            content = msg["content"]
-            # 首先是文本类命令
-            if content.startswith(":"):
-                command_words = content[1:].strip().split()
-                if not command_words:
-                    command = ""
-                else:
-                    command = command_words[0]
-
-                if command in ["exit", "q", "quit"]:
-                    kuon_stop()
-                    time.sleep(1)
-                    return
-                elif command in ["clear", "cl"]:
-                    if platform.system() == "Windows":
-                        os.system("cls")
+            while not input_msg_queue.empty():
+                msg = input_msg_queue.get_nowait()
+                logger.debug("接收到消息：{}".format(msg))
+                content = msg["content"]
+                # 首先是文本类命令
+                if content.startswith(":"):
+                    command_words = content[1:].strip().split()
+                    if not command_words:
+                        command = ""
                     else:
-                        os.system("clear")
-                    continue
-                elif command in ["help", "h"]:
-                    print(_HELP_MSG)
-                    continue
-                elif command in ["history", "his"]:
-                    print(ghost.conversation)
-                    for i in ghost.conversation:
-                        print(i["role"] + ":" + i["content"])
-                    continue
-                elif command in ["clear-history", "clh"]:
-                    ghost.init_conversation()
-                    print("\n>>>>历史以清空<<<<\n")
-                    continue
-                elif command in ["audio-on", "ao"]:
-                    input_message_manager.control("audio_input", "start")
-                    continue
-                elif command in ["audio-off", "af"]:
-                    input_message_manager.control("audio_input", "stop")
-                    continue
-                else:
-                    print("未知命令=>{}".format(command))
-                    continue
+                        command = command_words[0]
 
-            # 检测字符串中是否有命令
-            def check_cmd(s, key_list, percentage):
-                for key in key_list:
-                    if key in s and len(key) / len(s) >= percentage:
-                        return True
+                    if command in ["exit", "q", "quit"]:
+                        kuon_stop()
+                        time.sleep(1)
+                        return
+                    elif command in ["clear", "cl"]:
+                        if platform.system() == "Windows":
+                            os.system("cls")
+                        else:
+                            os.system("clear")
+                        continue
+                    elif command in ["help", "h"]:
+                        print(_HELP_MSG)
+                        continue
+                    elif command in ["history", "his"]:
+                        print(ghost.conversation)
+                        for i in ghost.conversation:
+                            print(i["role"] + ":" + i["content"])
+                        continue
+                    elif command in ["clear-history", "clh"]:
+                        ghost.init_conversation()
+                        print("\n>>>>历史以清空<<<<\n")
+                        continue
+                    elif command in ["audio-on", "ao"]:
+                        input_message_manager.control("audio_input", "start")
+                        continue
+                    elif command in ["audio-off", "af"]:
+                        input_message_manager.control("audio_input", "stop")
+                        continue
                     else:
-                        return False
+                        print("未知命令=>{}".format(command))
+                        continue
 
-            if check_cmd(content, config["voice_stop_cmd"], 0.4):
-                msg = {"type": "cmd", "content": "stop"}
-                output_msg_queue.put_nowait(msg)
-                continue
+                # 检测字符串中是否有命令
+                def check_cmd(s, key_list, percentage):
+                    for key in key_list:
+                        if key in s and len(key) / len(s) >= percentage:
+                            return True
+                        else:
+                            return False
 
-            # 正常对话
-            try:
-                output_text("（久远思考中）")
-                chat_response = ghost.ask(content)
-            except Exception as e:
-                logger.warning("llm对话失败：{}".format(e))
+                if check_cmd(content, config["voice_stop_cmd"], 0.4):
+                    msg = {"type": "cmd", "content": "stop"}
+                    output_msg_queue.put_nowait(msg)
+                    continue
 
-            # 将其放入到执行任务的队列中去
-            output_text(chat_response)
-            output_speech(chat_response)
+                # 正常对话
+                try:
+                    output_text("（久远思考中）")
+                    chat_response = ghost.ask(content)
+                except Exception as e:
+                    logger.warning("llm对话失败：{}".format(e))
+
+                # 将其放入到执行任务的队列中去
+                output_text(chat_response)
+                output_speech(chat_response)
+    except KeyboardInterrupt:
+        kuon_stop()
+        time.sleep(1)
 
 
 if __name__ == "__main__":

@@ -20,14 +20,14 @@ def text_to_sequence(text, symbols, cleaner_names):
   sequence = []
   symbol_to_id = {s: i for i, s in enumerate(symbols)}
   clean_text = _clean_text(text, cleaner_names)
-  print(clean_text)
-  print(f" length:{len(clean_text)}")
+  #print(clean_text)
+  #print(f" length:{len(clean_text)}")
   for symbol in clean_text:
     if symbol not in symbol_to_id.keys():
       continue
     symbol_id = symbol_to_id[symbol]
     sequence += [symbol_id]
-  print(f" length:{len(sequence)}")
+  #print(f" length:{len(sequence)}")
   return sequence
 
 

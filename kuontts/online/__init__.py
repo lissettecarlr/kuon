@@ -25,10 +25,13 @@ class OnlineTTS():
                     import scipy.io.wavfile as wavf
                     wavf.write(save_path,rate, audio)
                     #print("tts转换完成：{}".format(aduio_path))
-                    return "Success",save_path
-                else:
+                    # return "Success",save_path
+                # else:
                     #print("tts转换完成")
-                    return "Success",audio
+                    # 和offline通义输出格式
+                output=[rate,audio]
+                return "Success",output
+            
             #print("tts转换失败：{}".format(data["message"]))
             return "Fail",data["message"]
         else:
