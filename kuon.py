@@ -151,9 +151,13 @@ class digestion_output_thread(threading.Thread):
                 if msg["type"] == "speech":
                     # 将文本转化为语音
                     audio_save_path = "./temp/tts-{}.wav".format(audio_num)
-                    audio = self.tts.convert(
-                       text = msg["content"], save_path = audio_save_path
-                    )
+                    try:
+                        audio = self.tts.convert(
+                            text = msg["content"], save_path = audio_save_path
+                        )
+                    except Exception as e:
+                        logger.warning(e)
+                        continue
                     audio_num += 1
                     # 添加进入播放列表
                     self.player.input_audio(audio_save_path)

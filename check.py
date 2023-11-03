@@ -27,10 +27,12 @@ def check_tts():
     if os.path.exists(temp_file):
         # 删除文件
         os.remove(temp_file)
-    res = tts.convert(text="你好，很高兴认识你", save_path=temp_file)
-    if res == None:
-        print("语音合成失败")
+    try:
+        res = tts.convert(text="你好，很高兴认识你", save_path=temp_file)
+    except Exception as e:
+        print("语音合成失败:{}".format(e))
         return False
+    
     if os.path.exists(temp_file):
         print("语音合成成功")
         return True
