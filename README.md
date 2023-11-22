@@ -61,8 +61,7 @@
 
 #### 3.1.2 语言转文本功能
 
-现在被独立到仓库[AutomaticSpeechRecognition](https://github.com/lissettecarlr/AutomaticSpeechRecognition)。本仓库已经被添加，使用funasr接口方式，服务部署参考AutomaticSpeechRecognition仓库的[说明](https://github.com/lissettecarlr/AutomaticSpeechRecognition/blob/main/README.md)，需要使用其他方式自行参考该说明。
-
+现在被独立到仓库[AutomaticSpeechRecognition](https://github.com/lissettecarlr/AutomaticSpeechRecognition)。本仓库已经被添加相关代码到`kuonasr`文件夹，默认使用funasr接口方式，服务部署参考AutomaticSpeechRecognition仓库的[说明](https://github.com/lissettecarlr/AutomaticSpeechRecognition/blob/main/README.md)，需要使用其他方式自行参考该说明。
 
 使用前请根据funasr服务位置修改配置文件`kuonasr/config.yaml`
 ```yaml
@@ -70,7 +69,7 @@ funasr:
    url: ws://172.0.0.1:1234
 ```
 
-如需要更新代码可以执行：
+可以使用下列脚本拉去最新代码（通常不需要）
 ```bash
 cd script
 python asr_update.py
@@ -78,16 +77,17 @@ python asr_update.py
 
 #### 3.1.3 文本转语言功能
 
-现在被独立到仓库[TextToSpeech](https://github.com/lissettecarlr/TextToSpeech)，仓库分为训练模型的fineturn和推理的kuontts。
+现在被独立到仓库[TextToSpeech](https://github.com/lissettecarlr/TextToSpeech)，仓库分为训练模型的fineturn和推理的kuontts，本仓库已经将推理代码添加到`kuontts`文件夹，
 
-本仓库已经集成，但如需要更新代码可以执行：
+默认使用了接口方式，也即这里无需安装环境，也无需放入模型，需要根据部署的服务修改`kuontts/config.yaml`里的请求url和speaker。服务部署和其他使用方式请移步[TextToSpeech](https://github.com/lissettecarlr/TextToSpeech)仓库说明。
+
+离线方式使用则修改配置文件`kuontts/config.yaml`，将`online`改为`offline`，并将模型放入`kuontts/offline/OUTPUT_MODEL`中，我这里暂时训练了paimon的模型来用。
+
+如需要更新代码可以执行：
 ```bash
 cd script
 python tts_update.py
 ```
-
-默认使用了接口方式，也即这里无需安装环境，也无需放入模型，需要根据不是的服务修改`kuontts/config.yaml`里的请求url和speaker。服务部署和其他使用方式请移步[TextToSpeech](https://github.com/lissettecarlr/TextToSpeech)仓库说明。
-
 
 
 #### 3.1.4 对话模型
@@ -157,7 +157,7 @@ python kuon.py
 
 ## 4 其他
 
-#### 无法输入声音
+####  4.1 无法输入声音
 
 在配置文件中可以调整麦克风的输入通道，设备上由那些通道可以通过命令查看，默认是1
 ```
@@ -168,14 +168,14 @@ python .\utils\get_input_channels.py
 ```
 还能调节输入声音的阈值threshold，阈值越高，需要的声音越大才能触发输入。
 
-#### 代码通过black格式化
+#### 4.2 代码通过black格式化
 
 [black仓库](https://github.com/psf/black)
 
-#### kuonasr相关问题
+#### 4.3 语音转文本相关问题
 
-见仓库[AutomaticSpeechRecognition](https://github.com/lissettecarlr/AutomaticSpeechRecognition)
+见仓库[AutomaticSpeechRecognition](https://github.com/lissettecarlr/AutomaticSpeechRecognition)，该仓库用于语音识别，目前有三种实现方式，分别是paraformer、whisper_online、funasr，能够独立使用
 
-#### kuontts相关问题
+#### 4.4 文本转语音相关问题
 
-见仓库[TextToSepeech](https://github.com/lissettecarlr/TextToSpeech)
+见仓库[TextToSepeech](https://github.com/lissettecarlr/TextToSpeech),文本转语音，包含训练部分和推理部分，能本地运行也可服务器部署
