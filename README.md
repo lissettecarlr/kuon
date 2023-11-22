@@ -77,9 +77,9 @@ python asr_update.py
 
 #### 3.1.3 文本转语言功能
 
-现在被独立到仓库[TextToSpeech](https://github.com/lissettecarlr/TextToSpeech)，仓库分为训练模型的fineturn和推理的kuontts，本仓库已经将推理代码添加到`kuontts`文件夹，
+现在被独立到仓库[TextToSpeech](https://github.com/lissettecarlr/TextToSpeech)，仓库分为训练模型的fineturn和推理的kuontts，本仓库已经将推理代码添加到`kuontts`文件夹
 
-默认使用了接口方式，也即这里无需安装环境，也无需放入模型，需要根据部署的服务修改`kuontts/config.yaml`里的请求url和speaker。服务部署和其他使用方式请移步[TextToSpeech](https://github.com/lissettecarlr/TextToSpeech)仓库说明。
+默认使用了接口方式，也即这里无需安装环境，也无需放入模型，需要根据部署的服务修改`kuontts/config.yaml`里的请求url和speaker。服务部署和其他问题请移步[TextToSpeech](https://github.com/lissettecarlr/TextToSpeech)仓库说明。
 
 离线方式使用则修改配置文件`kuontts/config.yaml`，将`online`改为`offline`，并将模型放入`kuontts/offline/OUTPUT_MODEL`中，我这里暂时训练了paimon的模型来用。
 
@@ -100,6 +100,8 @@ model : gpt-3.5-turbo-16k
 timeout : 120 # 历史对话的遗忘时间
 preset : ./llm/kuon.json 
 ```
+
+其中`timeout`表示进过多次时间后情况历史对话。`preset`则是用于角色扮演的提示词地址。
 
 目前其他开源模型也有openai的api部署方式，自己部署后修改这个配置文件即可。这边我试着用qwen-7b，但是角色扮演的效果很差，目前还是gpt-4最优解。
 
