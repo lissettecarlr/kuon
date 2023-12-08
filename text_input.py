@@ -5,7 +5,6 @@ from queue import Queue
 from loguru import logger
 import time
 
-
 class TextInput(threading.Thread):
     def __init__(self, event: threading.Event = None) -> None:
         super().__init__()
@@ -40,6 +39,8 @@ class TextInput(threading.Thread):
 
             if self.exit_flag == False:
                 break
+
+            # 如果收到了文本输入
             if self.text:
                 self.text_queue.put_nowait(self.text)
                 self.event.set()

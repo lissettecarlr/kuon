@@ -170,8 +170,10 @@ class Chatgpt():
             return f"保存对话发送错误: {e}"
         return "保存对话成功"
     
-    # 获取当前conversation中的tokens数量
     def get_tokens_from_conversation(self):
+        '''
+        获取当前conversation中的tokens数量
+        '''
         try:
             encoding = tiktoken.encoding_for_model(self.model)
         except Exception as e:

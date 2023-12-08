@@ -23,9 +23,12 @@ _HELP_MSG = """\
 """
 
 
-# 输入消息处理线程
-# 将接收到的消息转化为固定格式仍到input_message_queue
+
 class input_message_thread(threading.Thread):
+    '''
+    输入消息处理线程
+    将接收到的消息转化为固定格式仍到input_message_queue
+    '''
     def __init__(self, input_message_queue: Queue, event: threading.Event = None):
         super().__init__()
         self.input_event = threading.Event()
@@ -34,17 +37,14 @@ class input_message_thread(threading.Thread):
 
         # 音频输入线程
         from auditory import auditory
-
         self.audio_input = auditory(event=self.input_event)
 
         # 文本输入线程
         from text_input import TextInput
-
         self.text_input = TextInput(self.input_event)
 
         # 语音转文字
         from kuonasr import ASR
-
         self.asr = ASR()
 
         self.exit_flag = True
@@ -120,8 +120,10 @@ class input_message_thread(threading.Thread):
                 raise ValueError("cmd is not support")
 
 
-# 将线程用于处理输出任务
 class digestion_output_thread(threading.Thread):
+    '''
+    该线程用于处理输出任务
+    '''
     def __init__(self, output_message_queue: Queue, event: threading.Event = None):
         super().__init__()
         self.event = event
@@ -181,7 +183,7 @@ def kuon():
         import sys
         logger.remove()
         logger.add(sys.stderr, level=config["log_filter_level"])
-    # 该队列用于存放输入消息
+
     input_msg_queue = Queue()
     output_msg_queue = Queue()
 
@@ -196,17 +198,26 @@ def kuon():
     output_message_manager.start()
 
     def kuon_stop():
+        '''
+        关闭所有线程
+        '''
         logger.info("退出程序")
         ghost.broken()
         input_message_manager.exit()
         output_message_manager.exit()
 
     def output_text(text):
+        '''
+        添加一个文本输出任务
+        '''
         if config["text_output_sw"] == True:
             msg = {"type": "text", "content": text}
             output_msg_queue.put_nowait(msg)
 
     def output_speech(text):
+        '''
+        添加一个语言输出任务
+        '''
         if config["voice_output_sw"] == True:
             msg = {"type": "speech", "content": text}
             output_msg_queue.put_nowait(msg)
@@ -215,11 +226,13 @@ def kuon():
             input_message_manager.output_event.wait()
             input_message_manager.output_event.clear()
 
+            # 处理输入消息
             while not input_msg_queue.empty():
                 msg = input_msg_queue.get_nowait()
                 logger.debug("接收到消息：{}".format(msg))
                 content = msg["content"]
-                # 首先是文本类命令
+
+                # 首先是文本命令，检测到文本以冒号开始则认为是命令
                 if content.startswith(":"):
                     command_words = content[1:].strip().split()
                     if not command_words:
@@ -261,12 +274,16 @@ def kuon():
 
                 # 检测字符串中是否有命令
                 def check_cmd(s, key_list, percentage):
+                    '''
+                    相似度匹配，用于判断s是否与key_list中得某个字符相似度高于percentage
+                    '''
                     for key in key_list:
                         if key in s and len(key) / len(s) >= percentage:
                             return True
                         else:
                             return False
 
+                # 用于判断是否是个语音命令
                 if check_cmd(content, config["voice_stop_cmd"], 0.4):
                     msg = {"type": "cmd", "content": "stop"}
                     output_msg_queue.put_nowait(msg)
@@ -282,6 +299,7 @@ def kuon():
                 # 将其放入到执行任务的队列中去
                 output_text(chat_response)
                 output_speech(chat_response)
+                
     except KeyboardInterrupt:
         kuon_stop()
         time.sleep(1)
