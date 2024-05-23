@@ -164,10 +164,11 @@ class digestion_output_thread(threading.Thread):
                     # 添加进入播放列表
                     self.player.input_audio(audio_save_path)
 
-                # 停止播放语音
-                if msg["type"] in self.config["voice_stop_cmd"]:
-                    logger.debug("接收到停止播放语音命令")
-                    self.player.stop_play_all()
+                # 如果是命令
+                if msg["type"] == "cmd":
+                    if msg["content"] == "stop":
+                        logger.debug("接收到停止播放语音命令")
+                        self.player.stop_play_all()
 
             time.sleep(1)
         logger.info("信息输出线程退出")
@@ -216,7 +217,7 @@ def kuon():
 
     def output_speech(text):
         '''
-        添加一个语言输出任务
+        添加一个语音输出任务
         '''
         if config["voice_output_sw"] == True:
             msg = {"type": "speech", "content": text}
@@ -303,6 +304,7 @@ def kuon():
     except KeyboardInterrupt:
         kuon_stop()
         time.sleep(1)
+
 
 
 if __name__ == "__main__":
