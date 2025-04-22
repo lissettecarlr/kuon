@@ -1,8 +1,6 @@
-GitPython>=3.1.37
-loguru
+openai
+python-dotenv
 tiktoken
-pyyaml
-scipy
-playsound
-websockets
 pyaudio
+loguru
+dashscope

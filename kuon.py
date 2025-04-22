@@ -1,311 +1,192 @@
-from loguru import logger
-from queue import Queue
+import os
+import sys
 import time
 import threading
-from config import read_yaml
-from llm.chatgpt import ghost
-import os
-import platform
+import queue
+from typing import List, Optional, Iterator, Union, Dict, Any
+from loguru import logger
 
-# 文本输入下的命令
-_HELP_MSG = """\
-文本命令（冒号+命令）:
-    :help / :h          显示帮助信息
-    :exit / :quit / :q  退出
-    :clear / :cl        清屏
-    :clear-his / :clh   清除对话历史
-    :history / :his     显示对话历史
-    :audio-on / :ao     开启语音输出
-    :audio-off / :af    关闭语音输出
+from chat_engines import MemoryChatAssistant
+from tts_engines import AliyunStreamEngine, TextToSpeechEngine
+
+class AIAssistant: 
+    def __init__(
+        self,
+        openai_api_key: Optional[str] = None,
+        openai_base_url: Optional[str] = None,
+        tts_engine: Optional[TextToSpeechEngine] = None,
+    ):
+        """初始化AI助手"""
+        self.chat_assistant = MemoryChatAssistant(
+            openai_api_key=openai_api_key or os.getenv("OPENAI_API_KEY"),
+            openai_base_url=openai_base_url or os.getenv("OPENAI_BASE_URL")
+        )
+        
+        self.tts_engine = tts_engine
+        self.tts_input_queue = queue.Queue()
+        
+        # 处理响应的线程
+        self.chat_thread_running = False # AI对话线程
+        self.tts_thread_running = False # TTS线程
+        self.tts_thread = None
+        self.chat_thread = None
+        
+ 
+    def _chat_thread_function(self, response_stream: Iterator[str]) -> None:
+        self.chat_thread_running = True
+        """处理流式响应"""
+        print("KUON: ", end="", flush=True)
+        
+        # 将响应分成句子或短语
+        buffer = ""
+        full_response = ""
+        
+        for chunk in response_stream:
+            buffer += chunk
+            full_response += chunk
+            print(chunk, end="", flush=True)
+            
+            # 如果有TTS引擎，则将内容存入tts_input_queue
+            if self.tts_engine is not None:
+                separators = ["。", "！", "？", ".", "!", "?", "\n"]
+                for sep in separators:
+                    if buffer.endswith(sep):
+                        self.tts_input_queue.put(buffer)
+                        buffer = ""
+
+            # 如果被修改了标志位，则直接退出
+            if self.chat_thread_running == False:
+                return
+            
+        # 如果缓冲区中还有内容，也推送到队列
+        if buffer and self.tts_engine is not None:
+                self.tts_input_queue.put(buffer)
+        
+        # 标记响应结束
+        self.tts_input_queue.put(None)
+        print()
     
-语音命令:
-    停止/别说了    将会停止播放语音
-"""
-
-
-
-class input_message_thread(threading.Thread):
-    '''
-    输入消息处理线程
-    将接收到的消息转化为固定格式仍到input_message_queue
-    '''
-    def __init__(self, input_message_queue: Queue, event: threading.Event = None):
-        super().__init__()
-        self.input_event = threading.Event()
-        self.output_event = threading.Event()
-        self.config = read_yaml("kuon.yaml")
-
-        # 音频输入线程
-        from auditory import auditory
-        self.audio_input = auditory(event=self.input_event)
-
-        # 文本输入线程
-        from text_input import TextInput
-        self.text_input = TextInput(self.input_event)
-
-        # 语音转文字
-        from kuonasr import ASR
-        self.asr = ASR()
-
-        self.exit_flag = True
-        self.input_message_queue = input_message_queue
-
-    def run(self):
-        logger.info("信息输入线程启动")
-        # 固定开启文本输入
-        self.text_input.start()
-        # 根据配置开启语音输入
-        if self.config["audio_input_sw"] == True:
-            self.audio_input.start()
-
-        while self.exit_flag:
-            self.input_event.wait()
-            self.input_event.clear()
-            if self.exit_flag == False:
-                break
-            self.audio_input_loop()
-        logger.info("信息输入线程退出")
-
-    def exit(self):
-        self.exit_flag = False
-        self.audio_input.stop()
-        self.text_input.exit()
-        self.input_event.set()
-
-    def audio_input_loop(self):
-        if self.exit_flag == False:
+    def _tts_thread_function(self) -> None:
+        """文本转语音的线程函数"""
+        
+        if self.tts_engine is None:
+            logger.error("意外启动TTS线程")
             return
-        # 处理音频输入内容
-        while not self.audio_input.audio_queue.empty():
-            if self.exit_flag == False:
-                return
-            # 取出音频
-            audio_file = self.audio_input.audio_queue.get_nowait()
-            # 转换音频
-            audio_text = self.asr.convert(audio_file)
-            # 将转换结果存入消息队列
-            if audio_text != "":
-                msg = {"from": "audio", "content": audio_text}
-                self.input_message_queue.put_nowait(msg)
-                self.output_event.set()
-
-        # 处理文本输入内容
-        while not self.text_input.text_queue.empty():
-            if self.exit_flag == False:
-                return
-            text = self.text_input.text_queue.get_nowait()
-            if text != "":
-                # 将文本存入消息队列
-                msg = {"from": "text", "content": text}
-                self.input_message_queue.put_nowait(msg)
-                self.output_event.set()
-
-        if self.exit_flag == False:
-            return
-
-    def control(self, type, cmd):
-        if type == "audio_input":
-            if cmd == "start":
-                self.audio_input.start()
-            elif cmd == "stop":
-                self.audio_input.stop()
-            else:
-                raise ValueError("cmd is not support")
-        if type == "text_input":
-            if cmd == "start":
-                self.text_input.start()
-            elif cmd == "stop":
-                self.text_input.exit()
-            else:
-                raise ValueError("cmd is not support")
-
-
-class digestion_output_thread(threading.Thread):
-    '''
-    该线程用于处理输出任务
-    '''
-    def __init__(self, output_message_queue: Queue, event: threading.Event = None):
-        super().__init__()
-        self.event = event
-        self.exit_flag = True
-        self.output_message_queue = output_message_queue
-        self.config = read_yaml("kuon.yaml")
-
-        from speech import SpeechThread
-
-        self.player = SpeechThread()
-        self.player.start()
-
-        from kuontts import TTS
-
-        self.tts = TTS()
-
-    def run(self):
-        logger.info("信息输出线程启动")
-        audio_num = 0
-        while self.exit_flag:
-            while not self.output_message_queue.empty():
-                msg = self.output_message_queue.get()
-                # 如果是文本显示
-                if msg["type"] == "text":
-                    print("KUON: " + msg["content"])
-                # 该任务是播放语音的话
-                if msg["type"] == "speech":
-                    # 将文本转化为语音
-                    audio_save_path = "./temp/tts-{}.wav".format(audio_num)
-                    try:
-                        audio = self.tts.convert(
-                            text = msg["content"], save_path = audio_save_path
-                        )
-                    except Exception as e:
-                        logger.warning(e)
-                        continue
-                    audio_num += 1
-                    # 添加进入播放列表
-                    self.player.input_audio(audio_save_path)
-
-                # 如果是命令
-                if msg["type"] == "cmd":
-                    if msg["content"] == "stop":
-                        logger.debug("接收到停止播放语音命令")
-                        self.player.stop_play_all()
-
-            time.sleep(1)
-        logger.info("信息输出线程退出")
-
-    def exit(self):
-        self.player.exit()
-        self.exit_flag = False
-
-
-def kuon():
-    config = read_yaml("kuon.yaml")
-    if config["log_filter"] == True:
-        import sys
-        logger.remove()
-        logger.add(sys.stderr, level=config["log_filter_level"])
-
-    input_msg_queue = Queue()
-    output_msg_queue = Queue()
-
-    # config = read_yaml('kuon.yaml')
-
-    # 该线程主要用于接收输入，将其转化为统一信息存入self.input_msg_queue
-    input_message_manager = input_message_thread(input_msg_queue)
-    input_message_manager.start()
-
-    # 输出消息处理线程
-    output_message_manager = digestion_output_thread(output_msg_queue)
-    output_message_manager.start()
-
-    def kuon_stop():
-        '''
-        关闭所有线程
-        '''
-        logger.info("退出程序")
-        ghost.broken()
-        input_message_manager.exit()
-        output_message_manager.exit()
-
-    def output_text(text):
-        '''
-        添加一个文本输出任务
-        '''
-        if config["text_output_sw"] == True:
-            msg = {"type": "text", "content": text}
-            output_msg_queue.put_nowait(msg)
-
-    def output_speech(text):
-        '''
-        添加一个语音输出任务
-        '''
-        if config["voice_output_sw"] == True:
-            msg = {"type": "speech", "content": text}
-            output_msg_queue.put_nowait(msg)
-    try:
-        while True:
-            input_message_manager.output_event.wait()
-            input_message_manager.output_event.clear()
-
-            # 处理输入消息
-            while not input_msg_queue.empty():
-                msg = input_msg_queue.get_nowait()
-                logger.debug("接收到消息：{}".format(msg))
-                content = msg["content"]
-
-                # 首先是文本命令，检测到文本以冒号开始则认为是命令
-                if content.startswith(":"):
-                    command_words = content[1:].strip().split()
-                    if not command_words:
-                        command = ""
-                    else:
-                        command = command_words[0]
-
-                    if command in ["exit", "q", "quit"]:
-                        kuon_stop()
-                        time.sleep(1)
-                        return
-                    elif command in ["clear", "cl"]:
-                        if platform.system() == "Windows":
-                            os.system("cls")
-                        else:
-                            os.system("clear")
-                        continue
-                    elif command in ["help", "h"]:
-                        print(_HELP_MSG)
-                        continue
-                    elif command in ["history", "his"]:
-                        print(ghost.conversation)
-                        for i in ghost.conversation:
-                            print(i["role"] + ":" + i["content"])
-                        continue
-                    elif command in ["clear-history", "clh"]:
-                        ghost.init_conversation()
-                        print("\n>>>>历史以清空<<<<\n")
-                        continue
-                    elif command in ["audio-on", "ao"]:
-                        input_message_manager.control("audio_input", "start")
-                        continue
-                    elif command in ["audio-off", "af"]:
-                        input_message_manager.control("audio_input", "stop")
-                        continue
-                    else:
-                        print("未知命令=>{}".format(command))
-                        continue
-
-                # 检测字符串中是否有命令
-                def check_cmd(s, key_list, percentage):
-                    '''
-                    相似度匹配，用于判断s是否与key_list中得某个字符相似度高于percentage
-                    '''
-                    for key in key_list:
-                        if key in s and len(key) / len(s) >= percentage:
-                            return True
-                        else:
-                            return False
-
-                # 用于判断是否是个语音命令
-                if check_cmd(content, config["voice_stop_cmd"], 0.4):
-                    msg = {"type": "cmd", "content": "stop"}
-                    output_msg_queue.put_nowait(msg)
-                    continue
-
-                # 正常对话
-                try:
-                    output_text("（久远思考中）")
-                    chat_response = ghost.ask(content)
-                except Exception as e:
-                    logger.warning("llm对话失败：{}".format(e))
-
-                # 将其放入到执行任务的队列中去
-                output_text(chat_response)
-                output_speech(chat_response)
+        
+        self.tts_thread_running = True  # 确保running标志在进入循环前被设置    
+        while self.tts_thread_running:
+            try:
+                text = self.tts_input_queue.get(timeout=1)
+                if text is None:  # 响应结束标记
+                    break
+             
+                # 将文本转换为语音并播放
+                self.tts_engine.text_to_speech(text)
                 
-    except KeyboardInterrupt:
-        kuon_stop()
-        time.sleep(1)
+                self.tts_input_queue.task_done()
 
+            except queue.Empty:
+                continue
+        
+        # 所有文本处理完成后，调用complete方法
+        if hasattr(self.tts_engine, 'complete'):
+            self.tts_engine.complete()
+    
+    def start_interactive_session(self) -> None:
+        """开始交互式会话"""
+        print("开始对话 (输入 'exit' 或 'quit' 退出)")
+        
+
+        while True:
+            # 只接受文本输入
+            text = input("\n你: ")
+            if text.lower() in ['exit', 'quit']:
+                break
+
+            #print(f"\n你: {text}")
+
+            # 退出上一次的AI对话线程
+            if self.chat_thread and self.chat_thread.is_alive():
+                logger.debug("退出上一次的AI对话线程")
+                self.chat_thread_running = False
+
+            # 当新输入内容的时候，关闭线程，重置TTS
+            if self.tts_thread and self.tts_thread.is_alive():
+                logger.debug("退出上一次的TTS线程")
+                self.tts_thread_running = False
+                self.tts_engine.stop()
+            
+
+            # AI对话线程
+            self.chat_thread = threading.Thread(
+                target=self._chat_thread_function,
+                args=(self.chat_assistant.chat(text),)
+            )
+            self.chat_thread.start()
+
+            # TTS线程
+            ## 如果TTS引擎存在，则启动TTS线程
+            if self.tts_engine is not None:
+                self.tts_engine.init()
+                self.tts_thread = threading.Thread(target=self._tts_thread_function)
+                self.tts_thread.start()
+            
+            # 等待AI回复完成
+            self.chat_thread.join()
+            
+            # 如果有TTS线程，等待它完成或允许用户在TTS过程中输入
+            # 这里选择不等待TTS完成，让用户可以在语音播放的同时继续输入
+            # 如果需要等待TTS完成，可以取消下面这行的注释
+            # if self.tts_thread and self.tts_thread.is_alive():
+            #     self.tts_thread.join()
+    
+    def exit(self) -> None:
+        """退出并清理资源"""
+        self.tts_thread = False
+        self.chat_thread = False
+        if self.tts_thread and self.tts_thread.is_alive():
+            self.tts_thread.join()
+        if self.chat_thread and self.chat_thread.is_alive():
+            self.chat_thread.join()
+
+        # 退出TTS引擎
+        if hasattr(self.tts_engine, 'exit'):
+            try:
+                self.tts_engine.exit()
+            except Exception as e:
+                print(f"退出TTS引擎时出错: {e}")
+        
+        self.chat_assistant.exit()
+        print("会话已结束")
+
+
+def main():
+    """主函数"""
+    # 从环境变量获取API密钥
+    api_key = os.getenv("OPENAI_API_KEY")
+    base_url = os.getenv("OPENAI_BASE_URL")
+    
+    if not api_key:
+        print("错误: 未设置OPENAI_API_KEY环境变量")
+        sys.exit(1)
+    
+    # 创建AI助手实例
+    assistant = AIAssistant(
+        openai_api_key=api_key,
+        openai_base_url=base_url,
+        tts_engine=AliyunStreamEngine()
+    )
+    
+    try:
+        # 开始交互式会话
+        assistant.start_interactive_session()
+    except KeyboardInterrupt:
+        print("\n程序被用户中断")
+    finally:
+        # 退出并清理资源
+        assistant.exit()
 
 
 if __name__ == "__main__":
-    kuon()
+    main()
+
