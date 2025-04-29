@@ -1,0 +1,3 @@
+tts:
+  enabled: true  # 是否启用TTS
+  engine: "aliyun"  # TTS引擎选择，目前支持 "aliyun" 

@@ -74,7 +74,7 @@ class AliyunStreamCallback(ResultCallback):
 class AliyunStreamEngine(TextToSpeechEngine):
     """阿里云流式文本转语音引擎"""
     
-    def __init__(self, model="cosyvoice-v1", voice="longxiaochun", api_key=None):
+    def __init__(self, model="cosyvoice-v2", voice="longwan_v2", api_key=None):
         """
         初始化阿里云流式TTS引擎
         
@@ -121,11 +121,11 @@ class AliyunStreamEngine(TextToSpeechEngine):
         if self.synthesizer is None:
             logger.debug("没有活跃的合成器，无需停止")
             return
-        
+
         logger.debug("开始强制停止TTS流程...")
         if self.synthesizer is not None:
             self.synthesizer.streaming_cancel()
- 
+        
         logger.debug("TTS已完全停止，可以开始新的合成")
   
     def complete(self):

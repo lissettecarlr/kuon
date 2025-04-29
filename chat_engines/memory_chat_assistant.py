@@ -14,7 +14,7 @@ load_dotenv()
 
 # 配置日志
 logger.remove()
-logger.add(sys.stdout, level="INFO")
+logger.add(sys.stdout, level="DEBUG")
 
 
 class MemoryChatAssistant:
@@ -25,11 +25,12 @@ class MemoryChatAssistant:
     """
     
     # 默认配置
+    DEFAULT_OPENAI_BASE_URL = "https://api.openai.com/v1"
     DEFAULT_MEMORY_MODEL = "gpt-4.1"
     DEFAULT_CHAT_MODEL = "gpt-4.1"
-    DEFAULT_COMPRESS_INTERVAL = 600  # 10分钟
-    DEFAULT_CONTEXT_MULTIPLIER = 0.5
-    DEFAULT_MAX_MEMORIES = 1000
+    DEFAULT_COMPRESS_INTERVAL = 600  # 进过多长时间后将短期记忆转化为长期记忆
+    DEFAULT_CONTEXT_MULTIPLIER = 0.5  # 上下文长度倍率，范围0.1-1.0，降低可节省成本
+    DEFAULT_MAX_MEMORIES = 1000  # 长期记忆的最大条目数
     
     # 模型上下文长度映射
     MODEL_CONTEXT_LENGTHS = {
@@ -43,15 +44,31 @@ class MemoryChatAssistant:
     DEFAULT_SYSTEM_PROMPT = """
     你现在扮演的是久远（Kuon），《传颂之物》系列中的主要女主角之一。你是一位聪明、温柔、善良但有点傲娇的兽耳少女，还有一条长长的尾巴。智慧聪颖，精通医术，性格坚强且富有责任感。你有着神秘的身世，对朋友非常关心，喜欢用温柔的话语安慰他人。你的语气温和，有时会带点俏皮和腹黑，面对困境时总能冷静分析情况，做出明智的决策。请用久远的口吻和风格与我互动，展现她的性格和魅力。
     """
+
+    # TTS系统提示
+    TTS_SYSTEM_PROMPT = """
+    你现在扮演的是久远（Kuon），《传颂之物》系列中的主要女主角之一。你是一位聪明、温柔、善良但有点傲娇的兽耳少女，还有一条长长的尾巴。智慧聪颖，精通医术，性格坚强且富有责任感。你有着神秘的身世，对朋友非常关心，喜欢用温柔的话语安慰他人。你的语气温和，有时会带点俏皮和腹黑，面对困境时总能冷静分析情况，做出明智的决策。请用久远的口吻和风格与我互动，展现她的性格和魅力。
+
+    在回复时，请遵循以下规则以确保文本适合语音合成：
+    1. 使用完整的句子，避免使用省略号或破折号
+    2. 数字要完整写出来，如"三个"而不是"3个"
+    3. 标点符号要规范使用，主要使用句号、逗号、问号和感叹号
+    4. 避免使用特殊符号、表情符号或网络用语
+    5. 语气词要自然，如"呢"、"啊"、"哦"等要适度使用
+    6. 保持对话的连贯性和自然度，让语音听起来流畅
+    7. 避免使用括号内的注释或说明
+    8. 句子长度要适中，避免过长的句子
+    """
     
     def __init__(self, 
-                 openai_api_key: str,
-                 openai_base_url: str,
+                 openai_api_key: Optional[str] = None,
+                 openai_base_url: Optional[str] = None,
                  memory_model_name: str = DEFAULT_MEMORY_MODEL,
                  chat_model_name: str = DEFAULT_CHAT_MODEL,
                  compress_interval: int = DEFAULT_COMPRESS_INTERVAL,
                  context_length_multiplier: float = DEFAULT_CONTEXT_MULTIPLIER,
-                 max_long_term_memories: int = DEFAULT_MAX_MEMORIES
+                 max_long_term_memories: int = DEFAULT_MAX_MEMORIES,
+                 use_tts_prompt: bool = False
                  ):
         """
         初始化带记忆功能的AI助手
@@ -64,7 +81,20 @@ class MemoryChatAssistant:
             compress_interval: 记忆压缩时间间隔（秒），为0则不自动清除
             context_length_multiplier: 上下文长度倍率，范围0.1-1.0，降低可节省成本
             max_long_term_memories: 长期记忆的最大条目数
+            use_tts_prompt: 是否使用TTS提示词
         """
+        if openai_api_key is None:
+            openai_api_key = os.getenv("OPENAI_API_KEY")
+            if openai_api_key is None:
+                logger.error("未设置OPENAI_API_KEY环境变量")
+                raise ValueError("未设置OPENAI_API_KEY环境变量")
+        
+        # 如果有环境变量则有
+        if openai_base_url is None:
+            openai_base_url = os.getenv("OPENAI_BASE_URL")
+            if openai_base_url is None:
+                openai_base_url = self.DEFAULT_OPENAI_BASE_URL
+
         # API客户端设置
         self.client = OpenAI(api_key=openai_api_key, base_url=openai_base_url)
         self.chat_model_name = chat_model_name
@@ -79,7 +109,7 @@ class MemoryChatAssistant:
         # 记忆存储
         self.short_term_memory: List[Dict[str, str]] = []
         self.long_term_memory = []
-        
+
         # 记忆持久化
         memory_file_path = "memory.json"
         current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -88,7 +118,7 @@ class MemoryChatAssistant:
         
         # 内部状态
         self.timer_last_conversation = None  # 记忆的定时器
-        self.system_prompt = self.DEFAULT_SYSTEM_PROMPT
+        self.system_prompt = self.TTS_SYSTEM_PROMPT if use_tts_prompt else self.DEFAULT_SYSTEM_PROMPT
         self.tokenizer = tiktoken.get_encoding("cl100k_base")  # GPT-4系列使用的编码器
 
         # 初始化日志
@@ -145,7 +175,7 @@ class MemoryChatAssistant:
         # 清除旧定时器
         if self.timer_last_conversation is not None:
             self.timer_last_conversation.cancel()
-
+        
         # 调用API获取回复
         try:
             response = self.client.chat.completions.create(
@@ -180,7 +210,7 @@ class MemoryChatAssistant:
         if self.compress_interval > 0:
             self.timer_last_conversation = threading.Timer(self.compress_interval, self._timeout_last_conversation)
             self.timer_last_conversation.start()
-        
+
     def _timeout_last_conversation(self) -> None:
         """超时处理：将短期记忆转化为长期记忆"""
         self._convert_short_term_to_long_term()
@@ -262,8 +292,6 @@ class MemoryChatAssistant:
                 logger.warning("移除末尾不完整的user记忆")
                 self.long_term_memory.pop()
 
-    # ----- 记忆持久化方法 -----
-
     def _load_long_term_memory(self) -> List[Dict[str, str]]:
         """从文件加载长期记忆，如果文件不存在则创建空文件"""
         if os.path.exists(self.memory_file_path):
@@ -282,7 +310,7 @@ class MemoryChatAssistant:
             with open(self.memory_file_path, 'w', encoding='utf-8') as f:
                 json.dump([], f, ensure_ascii=False, indent=2)
             return []
-    
+                        
     def _save_long_term_memory(self) -> None:
         """保存长期记忆到文件"""
         try:
@@ -292,8 +320,6 @@ class MemoryChatAssistant:
                 logger.debug(f"已保存 {len(self.long_term_memory)} 条长期记忆到 {self.memory_file_path}")
         except Exception as e:
             logger.error(f"保存长期记忆文件失败: {e}")
-    
-    # ----- 记忆压缩和处理方法 -----
     
     def _compress_conversations(self) -> List[Dict[str, str]]:
         """
@@ -429,8 +455,6 @@ class MemoryChatAssistant:
         self._convert_short_term_to_long_term()
 
 
-# ----- 测试和辅助函数 -----
-
 def main():
     """交互式测试MemoryChatAssistant的主函数"""
     # 从环境变量中读取配置
@@ -450,6 +474,7 @@ def main():
         context_length_multiplier=0.5,  # 默认使用模型上下文长度的50%
         max_long_term_memories=100,  # 默认最多保存100条长期记忆
         compress_interval=60,  # 默认每60秒压缩一次
+        use_tts_prompt=True
     )
     
     print("欢迎使用带记忆功能的AI助手!")

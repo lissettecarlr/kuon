@@ -46,6 +46,8 @@ linux
 ```bash
 export OPENAI_API_KEY=""
 export OPENAI_BASE_URL=""
+
+# 如果使用阿里云的TTS则
 export ALIYUN_ACCESS_KEY_ID=""
 ```
 
