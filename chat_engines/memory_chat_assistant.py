@@ -1,3 +1,4 @@
+
 import os
 import time
 import sys
@@ -11,10 +12,6 @@ from loguru import logger
 
 # 加载环境变量
 load_dotenv()
-
-# 配置日志
-logger.remove()
-logger.add(sys.stdout, level="DEBUG")
 
 
 class MemoryChatAssistant:
@@ -452,6 +449,7 @@ class MemoryChatAssistant:
         if self.timer_last_conversation is not None:
             self.timer_last_conversation.cancel()
         # 将短期记忆转化为长期记忆
+        logger.info("保存记忆并清理资源")
         self._convert_short_term_to_long_term()
 
 

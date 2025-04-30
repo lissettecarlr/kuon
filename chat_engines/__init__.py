@@ -1,7 +1,5 @@
-from .memory_chat_assistant import MemoryChatAssistant
+from .chat_langchain import ChatEngine
 
-__all__ = ["MemoryChatAssistant"]
+__all__ = [ "ChatEngine"]
 
-# 版本信息
-__version__ = "0.1.0" 
 

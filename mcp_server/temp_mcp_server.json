@@ -1,0 +1,12 @@
+{
+    "mcpServers": {
+      "general": {
+        "type": "stdio",
+        "command": "D:\\software\\mamba\\envs\\test\\python.exe",
+        "args": ["D:\\code\\test\\mcp\\kuon_mcp_server\\general_mcp_server.py"],
+        "env": {
+          "OPENWEATHERMAP_API_KEY": ""
+        }
+      }
+    }
+} 

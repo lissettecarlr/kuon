@@ -8,9 +8,7 @@ from tts_engines.base import TextToSpeechEngine
 
 from loguru import logger
 import sys
-# 配置日志
-logger.remove()
-logger.add(sys.stdout, level="INFO")
+
 
 
 class AliyunStreamCallback(ResultCallback):
@@ -125,7 +123,7 @@ class AliyunStreamEngine(TextToSpeechEngine):
         logger.debug("开始强制停止TTS流程...")
         if self.synthesizer is not None:
             self.synthesizer.streaming_cancel()
-        
+
         logger.debug("TTS已完全停止，可以开始新的合成")
   
     def complete(self):

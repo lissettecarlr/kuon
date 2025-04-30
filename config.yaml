@@ -1,3 +1,7 @@
 tts:
   enabled: true  # 是否启用TTS
   engine: "aliyun"  # TTS引擎选择，目前支持 "aliyun" 
+
+mcp:
+  enabled: true  # 是否默认启用MCP工具
+  config_path: "mcp_server/temp_mcp_server.json"  # MCP服务器配置文件路径 

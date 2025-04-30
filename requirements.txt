@@ -5,3 +5,8 @@ pyaudio
 loguru
 dashscope
 pyyaml
+
+# mcp
+openai-agents
+mcp[cli]
+pytz
