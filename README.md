@@ -1,5 +1,15 @@
 # Kuon
 
+<p align="center">
+  <img src="./images/logo.jpg" alt="Kuon Logo" width="200">
+</p>
+
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue)](https://www.python.org/)
+[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![OpenAI](https://img.shields.io/badge/OpenAI-API-412991)](https://openai.com/)
+[![TTS](https://img.shields.io/badge/TTS-Aliyun-FF6A00)](https://www.aliyun.com/)
+[![MCP](https://img.shields.io/badge/MCP-Enabled-brightgreen)](https://openai-agents.readthedocs.io/)
+
 久远，一个开发中的大模型语音助手。之前代码太臃肿，于是新分支重写，重点放在易用性上，使其成为一个实用的东西。
 
 ## 开发简述
@@ -16,11 +26,11 @@
 - [ ] 优化记忆存储，提升记忆价值
 - [ ] GUI交互
 
-## 使用
+## 安装与使用
 
-### 环境
+### 环境准备
 
-1. conda环境（可选）
+1. 创建并激活conda环境（可选）
 ```bash
 conda create -n kuon python=3.10
 conda activate kuon
@@ -37,28 +47,32 @@ cd kuon
 pip install -r requirements.txt
 ```
 
-4. 配置API密钥
+### 配置
 
-* 对话密钥（必须）
+#### 1. API密钥配置
+
+**对话密钥（必需）**
 ```bash
-# windows -PowerShell
-$env:OPENAI_API_KEY= ""
-$env:OPENAI_BASE_URL= ""
-# linux
-export OPENAI_API_KEY=""
-export OPENAI_BASE_URL=""
+# Windows (PowerShell)
+$env:OPENAI_API_KEY = "您的OpenAI API密钥"
+$env:OPENAI_BASE_URL = "API基础URL"
+
+# Linux/macOS
+export OPENAI_API_KEY="您的OpenAI API密钥"
+export OPENAI_BASE_URL="API基础URL"
 ```
 
 * TTS密钥（可选，目前只有阿里TTS，可以只文字交互）
 ```bash
-# windows -PowerShell
+# Windows (PowerShell)
 $env:ALIYUN_ACCESS_KEY_ID= ""
-# linux
+# Linux/macOS
 export ALIYUN_ACCESS_KEY_ID=""
 ```
 
+#### 2. 配置文件
 
-5. 配置文件，根目录的`config.yaml`
+根目录的`config.yaml`文件：
 ```yaml
 tts:
   enabled: true  # 是否启用TTS
@@ -69,7 +83,9 @@ mcp:
   config_path: "mcp_server/temp_mcp_server.json"  # MCP服务器配置文件路径 
 ```
 
-如果要使用`mcp`，那还需要关注下对应的配置文件，这里提供的示例`mcp_server/temp_mcp_server.json`，示例具体格式如下：
+#### 3. MCP配置（可选）
+
+如需使用MCP功能，请参考`mcp_server/temp_mcp_server.json`配置文件：
 ```json
 {
     "mcpServers": {
@@ -86,10 +102,8 @@ mcp:
         "url": "https://mcp.modelscope.cn/sse/"
       }
     }
-  } 
+}
 ```
-
-
 
 ### 启动
 
@@ -100,12 +114,14 @@ python kuon.py
 
 程序启动后，直接输入文本与AI交互。输入"exit"或"quit"退出程序。
 
+## 示例展示
 
-效果:
-![2025年4月30日](./images/2025年4月30日.png)
+下图展示了与久远助手的实际交互效果:
+
+![交互示例](./images/2025年4月30日.png)
 
 
-### 其他
+## 其他
 
 目前对话记忆被直接存储在了`chat_engines/memory.json`文件中，可以根据需求进行删改。
 特别是存储了一些奇怪的东西时。
